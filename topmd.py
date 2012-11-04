@@ -96,12 +96,14 @@ class Vertex(BaseStructure):
             for j in joints:
                 weight = cmds.skinPercent(skin_cluster, vtx, transform=j, q=True)
                 joint_weights.append(weight)
-            jw = joint_weights.sort().reverse()
+            joint_weights.sort()
+            joint_weights.reverse()
             if len(joint_weights) > 0:
-                weights.append(jw[0])
+                weights.append(joint_weights[0])
             else:
                 weights.append(1)
-        return weights
+        self.bone_weight = weights
+        print weights
     
     def InitBoneNum(self):
         bone_num = []
@@ -141,6 +143,7 @@ class Vertex(BaseStructure):
 
 s = cmds.ls(sl=True)
 v = Vertex(s[0])
+v.SetupBoneWeight('skinCluster1', ['joint1', 'joint2', 'joint3'])
 
 #get selecting uv coordinate
 #print cmds.polyEditUV(q=True)
