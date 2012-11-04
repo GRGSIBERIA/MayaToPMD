@@ -80,10 +80,12 @@ class Vertex(BaseStructure):
     def __init__(self, model):
         BaseStructure.__init__(self, model)
         self.names = GetVerticesList(model)
+        self.uv_names = GetUVList(model)
         self.indices = self.ToIndices()
         self.positions = self.ToPositions()
         self.normals = self.ToNormals()
-        print len(self.normals)
+        self.uvs = self.ToUVs()
+        print len(self.uvs)
     
     def ToIndices(self):
         indices = []
@@ -102,6 +104,12 @@ class Vertex(BaseStructure):
         for name in self.names:
             nrm.append(GetVertexNormal(name))
         return nrm
+
+    def ToUVs(self):
+        uvs = []
+        for name in self.uv_names:
+            uvs.append(GetUVCoordinate(name))
+        return uvs
 
 s = cmds.ls(sl=True)
 v = Vertex(s[0])
