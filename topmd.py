@@ -9,6 +9,7 @@ def GetUVCoordinate(uv):
     return cmds.polyEditUV(q=True)
 
 def GetVertexNormal(vtx):
+    cmds.select(vtx)
     count = len(cmds.polyNormalPerVertex(q=True, x=True))
     x = cmds.polyNormalPerVertex(q=True, x=True)
     y = cmds.polyNormalPerVertex(q=True, y=True)
@@ -27,7 +28,6 @@ def GetVertexPosition(vtx):
     return cmds.pointPosition(vtx)
 
 def GetIndex(name):
-    print name
     m = re.search('\[\w+\]', name)
     index = m.group().lstrip('[').rstrip(']')
     return int(index)
@@ -82,6 +82,8 @@ class Vertex(BaseStructure):
         self.names = GetVerticesList(model)
         self.indices = self.ToIndices()
         self.positions = self.ToPositions()
+        self.normals = self.ToNormals()
+        print len(self.normals)
     
     def ToIndices(self):
         indices = []
@@ -93,10 +95,15 @@ class Vertex(BaseStructure):
         pos = []
         for name in self.names:
             pos.append(GetVertexPosition(name))
-            print GetVertexPosition(name)
+        return pos
+            
+    def ToNormals(self):
+        nrm = []
+        for name in self.names:
+            nrm.append(GetVertexNormal(name))
+        return nrm
 
 s = cmds.ls(sl=True)
-print s
 v = Vertex(s[0])
 
 #get selecting uv coordinate
