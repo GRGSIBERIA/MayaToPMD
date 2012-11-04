@@ -86,7 +86,22 @@ class Vertex(BaseStructure):
         self.normals = self.ToNormals()
         self.uvs = self.ToUVs()
         self.bone_weight = self.InitBoneWeight()
+        self.bone_num = self.InitBoneNum()
         print len(self.uvs)
+    
+    def SetupBoneWeight(self, skin_cluster, joints):
+        weights = []
+        for vtx in self.names:
+            joint_weights = []
+            for j in joints:
+                weight = cmds.skinPercent(skin_cluster, vtx, transform=j, q=True)
+                joint_weights.append(weight)
+            jw = joint_weights.sort().reverse()
+            if len(joint_weights) > 0:
+                weights.append(jw[0])
+            else:
+                weights.append(1)
+        return weights
     
     def InitBoneNum(self):
         bone_num = []
