@@ -26,6 +26,12 @@ def GetVertexNormal(vtx):
 def GetVertexPosition(vtx):
     return cmds.pointPosition(q=True, x=True)
 
+def GetIndex(name):
+    print name
+    m = re.search('\[\w+\]', name)
+    index = m.group().lstrip('[').rstrip(']')
+    return int(index)
+
 def GetIndices(name):
     indices = name.split('     ')[2:]
     indices[len(indices)-1] = indices[len(indices)-1].split(' ')[0]
@@ -74,9 +80,17 @@ class Vertex(BaseStructure):
     def __init__(self, model):
         BaseStructure.__init__(self, model)
         self.names = GetVerticesList(model)
+        self.indices = self.ToIndices()
+        print self.indices
+    
+    def ToIndices(self):
+        indices = []
+        for name in self.names:
+            indices.append(GetIndex(name))
+        return indices
 
 s = cmds.ls(sl=True)
-print GetVertexIndicesFromTriangle(s[0])
+v = Vertex(s[0])
 
 #get selecting uv coordinate
 #print cmds.polyEditUV(q=True)
