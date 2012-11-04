@@ -24,7 +24,7 @@ def GetVertexNormal(vtx):
     return avg
 
 def GetVertexPosition(vtx):
-    return cmds.pointPosition(q=True, x=True)
+    return cmds.pointPosition(vtx)
 
 def GetIndex(name):
     print name
@@ -81,7 +81,7 @@ class Vertex(BaseStructure):
         BaseStructure.__init__(self, model)
         self.names = GetVerticesList(model)
         self.indices = self.ToIndices()
-        print self.indices
+        self.positions = self.ToPositions()
     
     def ToIndices(self):
         indices = []
@@ -89,14 +89,21 @@ class Vertex(BaseStructure):
             indices.append(GetIndex(name))
         return indices
 
+    def ToPositions(self):
+        pos = []
+        for name in self.names:
+            pos.append(GetVertexPosition(name))
+            print GetVertexPosition(name)
+
 s = cmds.ls(sl=True)
+print s
 v = Vertex(s[0])
 
 #get selecting uv coordinate
 #print cmds.polyEditUV(q=True)
 
 #get vertex position
-#print cmds.pointPosition(s[0] + '.v[0]')
+#print cmds.pointPosition(s[0])
 
 #get polygon count of vertex and face.
 #print cmds.polyEvaluate(s[0], v=True)
