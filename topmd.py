@@ -85,7 +85,14 @@ class Vertex(BaseStructure):
         self.positions = self.ToPositions()
         self.normals = self.ToNormals()
         self.uvs = self.ToUVs()
+        self.bone_weight = self.InitBoneWeight()
         print len(self.uvs)
+    
+    def InitBoneWeight(self):
+        weight = []
+        for i in range(len(self.positions)):
+            weight.append(100)
+        weight
     
     def ToIndices(self):
         indices = []
