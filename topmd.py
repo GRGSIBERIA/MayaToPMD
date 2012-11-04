@@ -65,14 +65,15 @@ def GetPolyElementNameList(model, count, attr_name):
 class BaseStructure:
     def __init__(self, model):
         self.model = model
-        self name = None
+        self.names = None
 
 #------------------------------------------------
 # Vertex Class
 #------------------------------------------------
-class Vertex:
+class Vertex(BaseStructure):
     def __init__(self, model):
-        
+        BaseStructure.__init__(self, model)
+        self.names = GetVerticesList(model)
 
 s = cmds.ls(sl=True)
 print GetVertexIndicesFromTriangle(s[0])
