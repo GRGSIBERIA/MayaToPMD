@@ -287,7 +287,14 @@ class Bone(BaseStructure):
         self.names = cmds.ls(sl=True, l=True)
         self.short = cmds.ls(sl=True)
         self.parent = self.BuildRelative()
+        self.tail_pos_index = self.InitTailPosIndex()
+        print self.tail_pos_index
         
+    def InitTailPosIndex(self):
+        indices = []
+        for bone in self.names:
+            indices += [0xFFFF]
+        return indices
 
     def BuildRelative(self):
         rel = []
