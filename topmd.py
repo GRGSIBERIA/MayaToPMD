@@ -209,7 +209,6 @@ class Material(BaseStructure):
         self.toon_index = self.InitToonIndex()
         self.edge_flag = self.InitEdgeFlag()
         self.file_name = self.ToFileName()
-        print self.file_name
         
     def ToFileName(self):
         files = []
@@ -277,6 +276,13 @@ class Material(BaseStructure):
         for mat in self.materials:
             count += [faces.count(mat)]
         return count
+
+#------------------------------------------------
+# Bone Class
+#------------------------------------------------
+class Bone(BaseStructure):
+    def __init__(self, model):
+        pass
 
 cmds.select('pCube1')
 s = cmds.ls(sl=True)
