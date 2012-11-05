@@ -485,12 +485,18 @@ class ExporterBase:
     def Char(self, d):
         bin.write(pack('<b', d))
         
+    def Export(self):
+        pass
+        
 #------------------------------------------------
 # Export Header Class
 #------------------------------------------------
 class ExportHeader(ExporterBase):
     def __init__(self, bin, data):
         ExporterBase.__init__(self, bin, data)
+        
+    def Export(self):
+        pass
 
 #------------------------------------------------
 # Export Vertices Class
@@ -499,6 +505,9 @@ class ExportVertices(ExporterBase):
     def __init__(self, bin, data):
         ExporterBase.__init__(self, bin, data)
 
+    def Export(self):
+        pass
+        
 #------------------------------------------------
 # Export Faces Class
 #------------------------------------------------
@@ -506,6 +515,9 @@ class ExportFaces(ExporterBase):
     def __init__(self, bin, data):
         ExporterBase.__init__(self, bin, data)
 
+    def Export(self):
+        pass
+        
 #------------------------------------------------
 # Export Materials Class
 #------------------------------------------------
@@ -513,6 +525,9 @@ class ExportMaterials(ExporterBase):
     def __init__(self, bin, data):
         ExporterBase.__init__(self, bin, data)
 
+    def Export(self):
+        pass
+        
 #------------------------------------------------
 # Export Bones Class
 #------------------------------------------------
@@ -520,12 +535,18 @@ class ExportBones(ExporterBase):
     def __init__(self, bin, data):
         ExporterBase.__init__(self, bin, data)
 
+    def Export(self):
+        pass
+        
 #------------------------------------------------
 # Export Skins Class
 #------------------------------------------------
 class ExportSkins(ExporterBase):
     def __init__(self, bin, data):
         ExporterBase.__init__(self, bin, data)
+
+    def Export(self):
+        pass
 
 cmds.select('pCube1')
 cmds.select('joint1', tgl=True)
