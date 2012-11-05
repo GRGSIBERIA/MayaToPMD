@@ -199,10 +199,11 @@ class Face(BaseStructure):
 # Material Class
 #------------------------------------------------
 class Material(BaseStructure):
-    def __init__(self, model):
+    def __init__(self, model, face):
         self.materials = GetAssinedMaterialNodeFromModel(model).sort()
         self.diffuse = self.ToDiffuse()
         self.transparent = self.ToTransparent()
+        self.face_count = self.CountFaceByMaterial(face)
         
     def ToDiffuse(self):
         diffuse = []
@@ -215,6 +216,13 @@ class Material(BaseStructure):
         for mat in self.materials:
             transp += cmds.getAttr(mat + '.transparency')
         return transp
+    
+    def CountFaceByMaterial(self, face):
+        faces = face.materials_from_face
+        count = []
+        for mat in self.materials:
+            count += [faces.count(mat)]
+        return count
 
 cmds.select('pCube1')
 s = cmds.ls(sl=True)
