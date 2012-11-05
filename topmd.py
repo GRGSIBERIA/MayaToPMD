@@ -166,9 +166,7 @@ class Face(BaseStructure):
         self.vtx_indices = self.BuildTriangleIntoIndices(vertex)
         self.count = len(self.vtx_indices)
         self.materials_from_face = self.ToMaterialFromFace()
-        print self.vtx_indices
         self.vtx_indices = self.SortingFaceByMaterial(self.materials_from_face)
-        print self.vtx_indices
         
     def BuildTriangleIntoIndices(self, vertex):
         indices = []
@@ -182,7 +180,7 @@ class Face(BaseStructure):
             cmds.select(name)
             cmds.hyperShade(smn=True)
             materials += cmds.ls(sl=True)
-        return materials
+        return materials.sort()
     
     def SortingFaceByMaterial(self, materials):
         mhash = {}
@@ -202,7 +200,7 @@ class Face(BaseStructure):
 #------------------------------------------------
 class Material(BaseStructure):
     def __init__(self, model):
-        self.materials = GetAssinedMaterialNodeFromModel(model)
+        self.materials = GetAssinedMaterialNodeFromModel(model).sort()
         self.diffuse = self.ToDiffuse()
         self.transparent = self.ToTransparent()
         
