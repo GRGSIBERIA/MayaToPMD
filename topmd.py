@@ -341,14 +341,22 @@ class Skin(BaseStructure):
         self.skin_indices_vertices = self.InvestigateIndicesFromVertices()        
         self.vert_count = self.CountVertexFromSkin()
 
+        # [0] -> index, [1] -> position
         self.base_indices_vertices = []
         
-    # return [0] is index, [1] is vector
-    def InvestigateIndicesFromVertices(self):
+    def GetModelVertices(self):
         model_vtx_name = GetVerticesList(self.model)
         model_vtx = []
         for vtx in model_vtx_name:
             model_vtx += [list(GetVertexPosition(vtx))]
+        return model_vtx
+        
+    def BuildBaseIndicesVertices(self):
+        
+        
+    # return [0] is index, [1] is vector
+    def InvestigateIndicesFromVertices(self):
+        model_vtx = self.GetModelVertices()
         
         skin_vtx = self.skin_vertex
         result_vec = []
