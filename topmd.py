@@ -204,10 +204,21 @@ class Material(BaseStructure):
         self.transparent = self.ToTransparent()
         self.face_count = self.CountFaceByMaterial(face)
         self.ambient = self.InitAmbient()
+        self.specular = self.ToSpecular()
+        
+    def ToSpecular(self):
+        spec = []
+        for mat in self.materials:
+            try:
+                cmds.select(mat)
+                spec += cmds.getAttr(mat + '.specularColor')
+            except ValueError:
+                spec += [[0.0, 0.0, 0.0]]
+        return spec
         
     def InitAmbient(self):
         amb = []
-        for i in materials:
+        for i in self.materials:
             amb += [[1.0, 1.0, 1.0]]
         return amb
         
@@ -256,10 +267,11 @@ m = Material(s[0], f)
 #print cmds.listHistory(s[0])
 
 #get assined material node from object
-#cmds.select('pCube1')
-#cmds.hyperShade(smn=True)
-#m = cmds.ls(sl=True)
-#print cmds.getAttr(m[0] + '.color')
+cmds.select('pCube1')
+cmds.hyperShade(smn=True)
+m = cmds.ls(sl=True)
+print m
+print cmds.getAttr(m[2] + '.specularColor')
 
 #get target weight
 #print cmds.skinPercent('skinCluster1', s[0]+'.vtx[0]', transform='joint1', q=True)
