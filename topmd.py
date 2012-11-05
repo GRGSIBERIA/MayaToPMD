@@ -291,7 +291,6 @@ class Bone(BaseStructure):
         self.bone_type = self.InitBoneType()
         self.ik_parent_bone_index = self.InitIKParentBone()
         self.bone_pos = self.ToBonePosition()
-        print self.ik_parent_bone_index
         
     def InitIKParentBone(self):
         ik = []
@@ -327,6 +326,13 @@ class Bone(BaseStructure):
                 r = None
             rel += [r]
         return rel
+
+#------------------------------------------------
+# Skin Class
+#------------------------------------------------
+class Skin(BaseStructure):
+    def __init(self, skins):
+        pass
 
 cmds.select('pCube1')
 cmds.select('joint1', tgl=True)
