@@ -12,7 +12,8 @@ def GetAssinedMaterialNodeFromModel(model):
 
 def GetUVCoordinate(uv):
     cmds.select(uv)
-    return cmds.polyEditUV(q=True)
+#    return cmds.polyEditUV(q=True)
+    return cmds.getAttr(uv)[0]
 
 def GetVertexNormal(vtx):
     cmds.select(vtx)
@@ -276,7 +277,8 @@ class Material(BaseStructure):
     def ToTransparent(self):
         transp = []
         for mat in self.materials:
-            transp += cmds.getAttr(mat + '.transparency')
+            t = cmds.getAttr(mat + '.transparency')[0]
+            transp += [0.298912 * t[0] + 0.586611 * t[1] + 0.114478 * t[2]]
         return transp
     
     def CountFaceByMaterial(self, face):
@@ -329,12 +331,12 @@ class Bone(BaseStructure):
 
     def BuildRelative(self):
         rel = []
-        for bone in self.names:
+        for i,bone in enumerate(self.names):
             r = cmds.listRelatives(bone, p=True, f=True)
             if r != None:
-                r = r[0]
+                r = i
             else:
-                r = None
+                r = 0xFFFF
             rel += [r]
         return rel
 
@@ -515,7 +517,7 @@ class ExporterBase:
     def Floats(self, arr):
         for d in arr: self.Float(d)
         
-    def Chars(self, d):
+    def Chars(self, arr):
         for d in arr: self.Char(d)
         
     def Export(self):
@@ -581,15 +583,15 @@ class ExportMaterials(ExporterBase):
         self.DWord(self.data.count)
         for i in range(self.data.count):
             self.Floats(self.data.diffuse[i])
-            self.Float(self.data.transparent)
-            self.Float(self.data.specularity)
+            self.Float(self.data.transparent[i])
+            self.Float(self.data.specularity[i])
             self.Floats(self.data.specular[i])
             self.Floats(self.data.ambient[i])
             self.Byte(self.data.toon_index[i])
             self.Byte(self.data.edge_flag[i])
             self.DWord(self.data.face_count[i])
             self.Chars(self.data.file_name[i])
-            for i in range(20-len(self.data.filename[i])):
+            for i in range(20-len(self.data.file_name[i])):
                 self.Char(0)
         print 'export Material'
                 
@@ -650,11 +652,11 @@ class ExportSkins(ExporterBase):
         self.Word(self.data.skin_count)
         
         # base
-        WriteSkin(null_word, self.data.base_count, 0, self.data.base_indices_vertices)
+        self.WriteSkin(null_word, self.data.base_count, 0, self.data.base_indices_vertices)
         
         # skin
         for i in range(self.data.skin_count):
-            WriteSkin(null_word, self.data.vert_count[i], 1, self.data.skin_indices_vertices[i])
+            self.WriteSkin(null_word, self.data.vert_count[i], 1, self.data.skin_indices_vertices[i])
         print 'export Skin'
 
 #------------------------------------------------
@@ -677,6 +679,9 @@ class ExportPlatform:
     def Export(self):
         self.bin = open(self.fname, 'wb')
         for l in self.list: l.Export()
+        self.bin.write(pack('<B', 0))
+        self.bin.write(pack('<B', 0))
+        self.bin.write(pack('<B', 0))
         self.bin.close
 
 cmds.select('pCube1')
@@ -684,7 +689,7 @@ cmds.select('joint1', tgl=True)
 cmds.select('pCube2', tgl=True)
 cmds.select('pCube3', tgl=True)
 w = StructureWindow()
-e = ExportPlatform('export.pmd', w)
+e = ExportPlatform('C:/export.pmd', w)
 e.Export()
 
 #get selecting uv coordinate
