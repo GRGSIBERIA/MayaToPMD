@@ -173,13 +173,16 @@ class Face(BaseStructure):
             indices += [GetVertexIndicesFromTriangle(name)]
         return indices
         
-    def ToMaterialFromFace():
+    def ToMaterialFromFace(self):
         materials = []
         for name in self.names:
             cmds.select(name)
             cmds.hyperShade(smn=True)
             materials += cmds.ls(sl=True)
         return materials
+    
+    def SortingFaceByMaterial(self):
+        pass
 
 #------------------------------------------------
 # Material Class
@@ -208,9 +211,7 @@ v = Vertex(s[0])
 f = Face(s[0], v)
 m = Material(s[0])
 
-cmds.select(s[0] + '.f[0]')
-cmds.hyperShade(smn=True)
-print cmds.ls(sl=True)
+print f.materials_from_face
 
 #get selecting uv coordinate
 #print cmds.polyEditUV(q=True)
