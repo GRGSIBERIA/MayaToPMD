@@ -431,6 +431,33 @@ class Skin(BaseStructure):
             skin_pos += [vtx_pos]
         return skin_pos
 
+#------------------------------------------------
+# Structure Window Class
+#------------------------------------------------
+class StructureWindow:
+    def __init__(self):
+        self.InitNames()
+        self.vertex = Vertex(self.model)
+        self.face = Face(model, self.vertex)
+        self.material = Material(self.model, self.face)
+        self.bone = Bone(self.model, self.root_bone)
+        self.skin = Skin(self.model, self.skin_names)
+        
+    def InitNames(self):
+        self.selected = cmds.ls(sl=True)
+        try:
+            self.model = selected[0]
+        except IndexError:
+            raise "do not select objects"
+        try:
+            self.root_bone = selected[1]
+        except IndexError:
+            pass
+        try:
+            self.skin_names = selected[2:]
+        except IndexError:
+            pass
+
 cmds.select('pCube1')
 cmds.select('joint1', tgl=True)
 cmds.select('pCube2', tgl=True)
