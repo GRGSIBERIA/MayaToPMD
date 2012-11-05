@@ -180,14 +180,13 @@ class Face(BaseStructure):
             cmds.select(name)
             cmds.hyperShade(smn=True)
             materials += cmds.ls(sl=True)
-        return materials.sort()
+        return materials
     
     def SortingFaceByMaterial(self, materials):
         mhash = {}
         for i in range(len(materials)):
             mhash[i] = materials[i]
         sorted_mesh = []
-        print mhash
         for k,v in sorted(mhash.items(), key=lambda x:x[1]):
             sorted_mesh += [[k,v]]
         result = []
@@ -200,7 +199,7 @@ class Face(BaseStructure):
 #------------------------------------------------
 class Material(BaseStructure):
     def __init__(self, model, face):
-        self.materials = GetAssinedMaterialNodeFromModel(model).sort()
+        self.materials = sorted(GetAssinedMaterialNodeFromModel(model))
         self.diffuse = self.ToDiffuse()
         self.transparent = self.ToTransparent()
         self.face_count = self.CountFaceByMaterial(face)
@@ -228,7 +227,9 @@ cmds.select('pCube1')
 s = cmds.ls(sl=True)
 v = Vertex(s[0])
 f = Face(s[0], v)
-m = Material(s[0])
+m = Material(s[0], f)
+print m.materials
+print m.face_count
 
 #get selecting uv coordinate
 #print cmds.polyEditUV(q=True)
