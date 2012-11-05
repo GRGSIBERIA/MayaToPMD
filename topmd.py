@@ -621,8 +621,29 @@ class ExportSkins(ExporterBase):
     def __init__(self, bin, data):
         ExporterBase.__init__(self, bin, data)
 
+    def WriteSkin(self, word, count, type, iv):
+        self.Chars(word)
+        self.Word(count)
+        self.Byte(type)
+        self.WriteVertex(count, iv)
+        
+    def WriteVertex(self, count, vertex):
+        for j in range(count):
+            self.DWord(vertex[j][0])
+            self.Floats(vertex[j][1])
+
     def Export(self):
-        pass
+        null_word = []
+        for i in range(20): null_word += [0]
+        
+        self.Word(self.data.skin_count)
+        
+        # base
+        WriteSkin(null_word, self.data.base_count, 0, self.data.base_indices_vertices)
+        
+        # skin
+        for i in range(self.data.skin_count):
+            WriteSkin(null_word, self.data.vert_count[i], 1, self.data.skin_indices_vertices[i])
 
 cmds.select('pCube1')
 cmds.select('joint1', tgl=True)
