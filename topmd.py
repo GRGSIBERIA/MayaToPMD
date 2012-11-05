@@ -207,7 +207,14 @@ class Material(BaseStructure):
         self.specular = self.ToSpecular()
         self.specularity = self.ToSpecularity()
         self.toon_index = self.InitToonIndex()
-        print self.toon_index
+        self.edge_flag = self.InitEdgeFlag()
+        print self.edge_flag
+        
+    def InitEdgeFlag(self):
+        flag = []
+        for mat in self.materials:
+            flag += [1]
+        return flag
         
     def InitToonIndex(self):
         toon = []
