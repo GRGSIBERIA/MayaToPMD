@@ -205,6 +205,17 @@ class Material(BaseStructure):
         self.face_count = self.CountFaceByMaterial(face)
         self.ambient = self.InitAmbient()
         self.specular = self.ToSpecular()
+        self.specularity = self.ToSpecularity()
+        
+    def ToSpecularity(self):
+        spec = []
+        for mat in self.materials:
+            try:
+                cmds.select(mat)
+                spec += [cmds.getAttr(mat + '.eccentricity')]
+            except ValueError:
+                spec += [0.0]
+        return spec
         
     def ToSpecular(self):
         spec = []
