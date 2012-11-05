@@ -94,6 +94,12 @@ class Vertex(BaseStructure):
         self.bone_weights = self.InitBoneWeight()
         self.bone_num = self.InitBoneNum()
         self.count = len(self.positions)
+        self.edge_flag = self.InitEdgeFlag()
+    
+    def InitEdgeFlag(self):
+        flag = []
+        for i in range(self.count): flag += [1]
+        return flag
     
     # parameter of joints is Hash<Int->String>
     def SetupBoneWeight(self, skin_cluster, joints):
@@ -475,6 +481,9 @@ class ExporterBase:
         
     def Word(self, d):
         bin.write(pack('<H', d))
+        
+    def Words(self, arr):
+        for d in arr: self.Word(d)
     
     def Byte(self, d):
         bin.write(pack('<B', d))
@@ -484,6 +493,9 @@ class ExporterBase:
         
     def Char(self, d):
         bin.write(pack('<b', d))
+        
+    def Floats(self, arr):
+        for d in arr: self.Float(d)
         
     def Export(self):
         pass
@@ -496,7 +508,14 @@ class ExportHeader(ExporterBase):
         ExporterBase.__init__(self, bin, data)
         
     def Export(self):
-        pass
+        magic = 'Pmd'
+        for c in magic: self.Char(c)
+        version = 1.00
+        self.Float(version)
+        for i in range(19): self.Char(0xFD)
+        self.Char(0x00)
+        for i in range(255): self.Char(0xFD)
+        self.Char(0x00)
 
 #------------------------------------------------
 # Export Vertices Class
@@ -506,8 +525,25 @@ class ExportVertices(ExporterBase):
         ExporterBase.__init__(self, bin, data)
 
     def Export(self):
-        pass
-        
+        self.DWord(self.data.count)
+        for i in self.data.count:
+            self.Floats(self.data.positions[i])
+            self.Floats(self.data.normals[i])
+            self.Floats(self.data.uvs[i])
+            self.Words(self.data.bone_num[i])
+            self.Byte(int(self.data.bone_weights[i] * 100))
+            self.Byte(
+"""
+        self.names = GetVerticesList(model)
+        self.uv_names = GetUVList(model)
+        self.indices = self.ToIndices()
+        self.positions = self.ToPositions()
+        self.normals = self.ToNormals()
+        self.uvs = self.ToUVs()
+        self.bone_weights = self.InitBoneWeight()
+        self.bone_num = self.InitBoneNum()
+        self.count = len(self.positions)
+"""
 #------------------------------------------------
 # Export Faces Class
 #------------------------------------------------
