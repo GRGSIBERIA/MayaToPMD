@@ -338,10 +338,10 @@ class Skin(BaseStructure):
         self.skin_vertex = self.SetupSkinPositions()
         
         # [0] -> index, [1] -> vector
-        self.skin_indices_vertices = self.InvestigateIndicesFromVertices()
-        print self.skin_indices_vertices
-        
-        #self.vert_count = len(self.skin_indices_vertices)
+        self.skin_indices_vertices = self.InvestigateIndicesFromVertices()        
+        self.vert_count = self.CountVertexFromSkin()
+
+        self.base_indices_vertices = []
         
     # return [0] is index, [1] is vector
     def InvestigateIndicesFromVertices(self):
@@ -372,7 +372,10 @@ class Skin(BaseStructure):
         return result_vec
         
     def CountVertexFromSkin(self):
-        pass
+        count = []
+        for iv in self.skin_indices_vertices:
+            count += [len(iv)]
+        return count
         
     def SetupSkinPositions(self):
         skin_pos = []
