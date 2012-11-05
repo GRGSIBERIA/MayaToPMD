@@ -332,11 +332,12 @@ class Bone(BaseStructure):
 # Skin Class
 #------------------------------------------------
 class Skin(BaseStructure):
-    def __init(self, model, skins):
+    def __init__(self, model, skins):
         BaseStructure.__init__(self, model)
         self.names = skins
-        self.skin_pos = self.SetupSkinPositions()
+        self.skin_vertex = self.SetupSkinPositions()
         self.vert_count = self.CountVertexFromSkin()
+        print self.skin_vertex
         
     def CountVertexFromSkin(self):
         pass
@@ -348,19 +349,25 @@ class Skin(BaseStructure):
             vtx_name_list = GetVerticesList(name)
             vtx_pos = []
             for vtx in vtx_name_list:
-                pos = GetVertexPosition(vtx)
-                for i in range(3): pos[i] -= base_pos[i]
+                pos = list(GetVertexPosition(vtx))
+                for i in range(3): pos[i] -= float(base_pos[0][i])
                 vtx_pos += [pos]
             skin_pos += [vtx_pos]
         return skin_pos
 
 cmds.select('pCube1')
 cmds.select('joint1', tgl=True)
+cmds.select('pCube2', tgl=True)
+cmds.select('pCube3', tgl=True)
 s = cmds.ls(sl=True)
 v = Vertex(s[0])
 f = Face(s[0], v)
 m = Material(s[0], f)
 b = Bone(s[0], s[1])
+
+sks = s[2:]
+print sks
+sk = Skin(s[0], sks)
 
 #get selecting uv coordinate
 #print cmds.polyEditUV(q=True)
