@@ -455,6 +455,77 @@ class StructureWindow:
             self.skin_names = self.selected[2:]
         except IndexError:
             pass
+            
+#------------------------------------------------
+# Exporter Base Class
+#------------------------------------------------
+class ExporterBase:
+    def __init__(self, bin, data):
+        self.bin = bin
+        self.data = data
+        
+    def Float(self, d):
+        bin.write(pack('<f', d))
+    
+    def UInt(self, d):
+        bin.write(pack('<I', d))
+        
+    def Int(self, d):
+        bin.write(pack('<i', d))
+        
+    def Word(self, d):
+        bin.write(pack('<H', d))
+    
+    def Byte(self, d):
+        bin.write(pack('<B', d))
+        
+    def DWord(self, d):
+        self.UInt(d)
+        
+    def Char(self, d):
+        bin.write(pack('<b', d))
+        
+#------------------------------------------------
+# Export Header Class
+#------------------------------------------------
+class ExportHeader(ExporterBase):
+    def __init__(self, bin, data):
+        ExporterBase.__init__(self, bin, data)
+
+#------------------------------------------------
+# Export Vertices Class
+#------------------------------------------------
+class ExportVertices(ExporterBase):
+    def __init__(self, bin, data):
+        ExporterBase.__init__(self, bin, data)
+
+#------------------------------------------------
+# Export Faces Class
+#------------------------------------------------
+class ExportFaces(ExporterBase):
+    def __init__(self, bin, data):
+        ExporterBase.__init__(self, bin, data)
+
+#------------------------------------------------
+# Export Materials Class
+#------------------------------------------------
+class ExportMaterials(ExporterBase):
+    def __init__(self, bin, data):
+        ExporterBase.__init__(self, bin, data)
+
+#------------------------------------------------
+# Export Bones Class
+#------------------------------------------------
+class ExportBones(ExporterBase):
+    def __init__(self, bin, data):
+        ExporterBase.__init__(self, bin, data)
+
+#------------------------------------------------
+# Export Skins Class
+#------------------------------------------------
+class ExportSkins(ExporterBase):
+    def __init__(self, bin, data):
+        ExporterBase.__init__(self, bin, data)
 
 cmds.select('pCube1')
 cmds.select('joint1', tgl=True)
