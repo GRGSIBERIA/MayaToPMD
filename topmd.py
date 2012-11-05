@@ -4,6 +4,11 @@ import re
 #-----------------------------------------------
 # Util Script
 #-----------------------------------------------
+def GetAssinedMaterialNodeFromModel(model):
+    cmds.select(model)
+    cmds.hyperShade(smn=True)
+    return cmds.ls(sl=True)
+
 def GetUVCoordinate(uv):
     cmds.select(uv)
     return cmds.polyEditUV(q=True)
@@ -168,17 +173,23 @@ class Face(BaseStructure):
         return indices
 
 #------------------------------------------------
-# Face Class
+# Material Class
 #------------------------------------------------
 class Material(BaseStructure):
     def __init__(self, model):
-        pass
+        self.materials = GetAssinedMaterialNodeFromModel(model)
+        self.diffuse = self.ToDiffuse(self.materials)
+        
+    def ToDiffuse(self, materials):
+        diffuse = []
+        for mat in materials:
+            diffuse += cmds.getAttr(mat + '.color')
+        return diffuse
 
 cmds.select('pCube1')
 s = cmds.ls(sl=True)
 v = Vertex(s[0])
 f = Face(s[0], v)
-print f.vtx_indices
 
 #get selecting uv coordinate
 #print cmds.polyEditUV(q=True)
@@ -198,6 +209,12 @@ print f.vtx_indices
 
 #get target history from list.
 #print cmds.listHistory(s[0])
+
+#get assined material node from object
+cmds.select('pCube1')
+cmds.hyperShade(smn=True)
+m = cmds.ls(sl=True)
+print cmds.getAttr(m[0] + '.color')
 
 #get target weight
 #print cmds.skinPercent('skinCluster1', s[0]+'.vtx[0]', transform='joint1', q=True)
