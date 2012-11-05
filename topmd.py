@@ -344,7 +344,21 @@ class Skin(BaseStructure):
         # [0] -> index, [1] -> position
         self.base_indices_vertices = self.BuildBaseIndicesVertices()
         self.base_count = len(self.base_indices_vertices)
-        print self.base_indices_vertices
+
+        print self.skin_indices_vertices
+        self.skin_indices_vertices = self.RebuildIndicesVerticesByBase()
+        print self.skin_indices_vertices
+        
+    def RebuildIndicesVerticesByBase(self):
+        base_iv = self.base_indices_vertices
+        skin_iv = self.skin_indices_vertices
+        
+        for skin in skin_iv:
+            indices = []
+            for ivs in skin:
+                for bi, bv in enumerate(base_iv):
+                    if bv[0] == ivs[0]:
+                        ivs[0] = bi                
         
     def GetModelVertices(self):
         model_vtx_name = GetVerticesList(self.model)
@@ -426,7 +440,6 @@ m = Material(s[0], f)
 b = Bone(s[0], s[1])
 
 sks = s[2:]
-print sks
 sk = Skin(s[0], sks)
 
 #get selecting uv coordinate
