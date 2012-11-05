@@ -167,6 +167,13 @@ class Face(BaseStructure):
             indices += [GetVertexIndicesFromTriangle(name)]
         return indices
 
+#------------------------------------------------
+# Face Class
+#------------------------------------------------
+class Material(BaseStructure):
+    def __init__(self, model):
+        pass
+
 cmds.select('pCube1')
 s = cmds.ls(sl=True)
 v = Vertex(s[0])
