@@ -542,7 +542,9 @@ class ExportFaces(ExporterBase):
         ExporterBase.__init__(self, bin, data)
 
     def Export(self):
-        pass
+        self.DWord(self.data.count)
+        for triangle in self.data.vtx_indices:
+            self.Words(triangle)
         
 #------------------------------------------------
 # Export Materials Class
