@@ -76,6 +76,14 @@ class BaseStructure:
 #------------------------------------------------
 # Vertex Class
 #------------------------------------------------
+class Face(BaseStructure):
+    def __init__(self, model):
+        pass
+
+
+#------------------------------------------------
+# Vertex Class
+#------------------------------------------------
 class Vertex(BaseStructure):
     def __init__(self, model):
         BaseStructure.__init__(self, model)
