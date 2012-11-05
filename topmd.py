@@ -76,14 +76,6 @@ class BaseStructure:
 #------------------------------------------------
 # Vertex Class
 #------------------------------------------------
-class Face(BaseStructure):
-    def __init__(self, model):
-        pass
-
-
-#------------------------------------------------
-# Vertex Class
-#------------------------------------------------
 class Vertex(BaseStructure):
     def __init__(self, model):
         BaseStructure.__init__(self, model)
@@ -95,6 +87,7 @@ class Vertex(BaseStructure):
         self.uvs = self.ToUVs()
         self.bone_weights = self.InitBoneWeight()
         self.bone_num = self.InitBoneNum()
+        self.count = len(self.positions)
     
     # parameter of joints is Hash<Int->String>
     def SetupBoneWeight(self, skin_cluster, joints):
@@ -156,6 +149,22 @@ class Vertex(BaseStructure):
         for name in self.uv_names:
             uvs.append(GetUVCoordinate(name))
         return uvs
+
+#------------------------------------------------
+# Face Class
+#------------------------------------------------
+class Face(BaseStructure):
+    def __init__(self, model, vertex):
+        BaseStructure.__init__(self, model)
+        self.names = GetFaceList(model)
+        self.vtx_indices = BuildTriangleIntoIndices(vertex)
+        self.count = len(self.vtx_indices)
+        
+    def BuildTriangleIntoIndices(self, vertex):
+        indices = []
+        for name in self.names:
+            indices += [GetVertexIndicesFromTriangle(name)]
+        return indices
 
 s = cmds.ls(sl=True)
 v = Vertex(s[0])
