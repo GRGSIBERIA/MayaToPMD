@@ -205,6 +205,7 @@ class Face(BaseStructure):
 #------------------------------------------------
 class Material(BaseStructure):
     def __init__(self, model, face):
+        BaseStructure.__init__(self, model)
         self.materials = sorted(GetAssinedMaterialNodeFromModel(model))
         self.diffuse = self.ToDiffuse()
         self.transparent = self.ToTransparent()
@@ -215,6 +216,7 @@ class Material(BaseStructure):
         self.toon_index = self.InitToonIndex()
         self.edge_flag = self.InitEdgeFlag()
         self.file_name = self.ToFileName()
+        self.count = len(self.materials)
         
     def ToFileName(self):
         files = []
@@ -447,6 +449,16 @@ class StructureWindow:
         self.bone = Bone(self.model, self.root_bone)
         self.skin = Skin(self.model, self.skin_names)
         
+        self.skin_cluster = self.GetSkinCluster()
+        self.vertex.SetupBoneWeight(self.skin_cluster, self.bone.names)
+        
+    def GetSkinCluster(self):
+        history = cmds.listHistory(self.model)
+        for h in history:
+            if cmds.objectType(h, isType='skinCluster'):
+                return h
+        return None
+        
     def InitNames(self):
         self.selected = cmds.ls(sl=True)
         try:
@@ -496,6 +508,9 @@ class ExporterBase:
         
     def Floats(self, arr):
         for d in arr: self.Float(d)
+        
+    def Chars(self, d):
+        for d in arr: self.Char(d)
         
     def Export(self):
         pass
@@ -554,8 +569,20 @@ class ExportMaterials(ExporterBase):
         ExporterBase.__init__(self, bin, data)
 
     def Export(self):
-        pass
-        
+        self.DWord(self.data.count)
+        for i in range(self.data.count):
+            self.Floats(self.data.diffuse[i])
+            self.Float(self.data.transparent)
+            self.Float(self.data.specularity)
+            self.Floats(self.data.specular[i])
+            self.Floats(self.data.ambient[i])
+            self.Byte(self.data.toon_index[i])
+            self.Byte(self.data.edge_flag[i])
+            self.DWord(self.data.face_count[i])
+            self.Chars(self.data.file_name[i])
+            for i in range(20-len(self.data.filename[i])):
+                self.Char(0)
+                
 #------------------------------------------------
 # Export Bones Class
 #------------------------------------------------
