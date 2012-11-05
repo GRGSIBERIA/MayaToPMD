@@ -213,7 +213,7 @@ class Material(BaseStructure):
                 cmds.select(mat)
                 spec += cmds.getAttr(mat + '.specularColor')
             except ValueError:
-                spec += [[0.0, 0.0, 0.0]]
+                spec += [(0.0, 0.0, 0.0)]
         return spec
         
     def InitAmbient(self):
@@ -267,11 +267,11 @@ m = Material(s[0], f)
 #print cmds.listHistory(s[0])
 
 #get assined material node from object
-cmds.select('pCube1')
-cmds.hyperShade(smn=True)
-m = cmds.ls(sl=True)
-print m
-print cmds.getAttr(m[2] + '.specularColor')
+#cmds.select('pCube1')
+#cmds.hyperShade(smn=True)
+#m = cmds.ls(sl=True)
+#print m
+#print cmds.getAttr(m[2] + '.specularColor')
 
 #get target weight
 #print cmds.skinPercent('skinCluster1', s[0]+'.vtx[0]', transform='joint1', q=True)
