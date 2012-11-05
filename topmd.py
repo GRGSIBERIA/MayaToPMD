@@ -300,6 +300,7 @@ class Bone(BaseStructure):
         self.bone_type = self.InitBoneType()
         self.ik_parent_bone_index = self.InitIKParentBone()
         self.bone_pos = self.ToBonePosition()
+        self.count = len(self.names)
         
     def InitIKParentBone(self):
         ik = []
@@ -587,6 +588,26 @@ class ExportMaterials(ExporterBase):
 # Export Bones Class
 #------------------------------------------------
 class ExportBones(ExporterBase):
+    def __init__(self, bin, data):
+        ExporterBase.__init__(self, bin, data)
+
+    def Export(self):
+        self.Word(self.data.count)
+        null_words = []
+        for i in range(20): null_words += [0]
+        
+        for i in self.data.count:
+            self.Chars(null_words)
+            self.Word(self.data.parent[i])
+            self.Word(0xFFFF)
+            self.Byte(0)
+            self.Word(0)
+            self.Floats(self.data.bone_pos[i])
+
+#------------------------------------------------
+# Export IK Class
+#------------------------------------------------
+class ExportIKs(ExporterBase):
     def __init__(self, bin, data):
         ExporterBase.__init__(self, bin, data)
 
