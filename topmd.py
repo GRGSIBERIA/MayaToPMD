@@ -165,12 +165,21 @@ class Face(BaseStructure):
         self.names = GetFacesList(model)
         self.vtx_indices = self.BuildTriangleIntoIndices(vertex)
         self.count = len(self.vtx_indices)
+        self.materials_from_face = self.ToMaterialFromFace()
         
     def BuildTriangleIntoIndices(self, vertex):
         indices = []
         for name in self.names:
             indices += [GetVertexIndicesFromTriangle(name)]
         return indices
+        
+    def ToMaterialFromFace():
+        materials = []
+        for name in self.names:
+            cmds.select(name)
+            cmds.hyperShade(smn=True)
+            materials += cmds.ls(sl=True)
+        return materials
 
 #------------------------------------------------
 # Material Class
@@ -178,18 +187,30 @@ class Face(BaseStructure):
 class Material(BaseStructure):
     def __init__(self, model):
         self.materials = GetAssinedMaterialNodeFromModel(model)
-        self.diffuse = self.ToDiffuse(self.materials)
+        self.diffuse = self.ToDiffuse()
+        self.transparent = self.ToTransparent()
         
-    def ToDiffuse(self, materials):
+    def ToDiffuse(self):
         diffuse = []
-        for mat in materials:
+        for mat in self.materials:
             diffuse += cmds.getAttr(mat + '.color')
         return diffuse
+        
+    def ToTransparent(self):
+        transp = []
+        for mat in self.materials:
+            transp += cmds.getAttr(mat + '.transparency')
+        return transp
 
 cmds.select('pCube1')
 s = cmds.ls(sl=True)
 v = Vertex(s[0])
 f = Face(s[0], v)
+m = Material(s[0])
+
+cmds.select(s[0] + '.f[0]')
+cmds.hyperShade(smn=True)
+print cmds.ls(sl=True)
 
 #get selecting uv coordinate
 #print cmds.polyEditUV(q=True)
@@ -211,10 +232,10 @@ f = Face(s[0], v)
 #print cmds.listHistory(s[0])
 
 #get assined material node from object
-cmds.select('pCube1')
-cmds.hyperShade(smn=True)
-m = cmds.ls(sl=True)
-print cmds.getAttr(m[0] + '.color')
+#cmds.select('pCube1')
+#cmds.hyperShade(smn=True)
+#m = cmds.ls(sl=True)
+#print cmds.getAttr(m[0] + '.color')
 
 #get target weight
 #print cmds.skinPercent('skinCluster1', s[0]+'.vtx[0]', transform='joint1', q=True)
