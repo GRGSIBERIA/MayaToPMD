@@ -206,6 +206,14 @@ class Material(BaseStructure):
         self.ambient = self.InitAmbient()
         self.specular = self.ToSpecular()
         self.specularity = self.ToSpecularity()
+        self.toon_index = self.InitToonIndex()
+        print self.toon_index
+        
+    def InitToonIndex(self):
+        toon = []
+        for mat in self.materials:
+            toon += [0xFF]
+        return toon
         
     def ToSpecularity(self):
         spec = []
