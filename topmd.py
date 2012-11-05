@@ -85,25 +85,33 @@ class Vertex(BaseStructure):
         self.positions = self.ToPositions()
         self.normals = self.ToNormals()
         self.uvs = self.ToUVs()
-        self.bone_weight = self.InitBoneWeight()
+        self.bone_weights = self.InitBoneWeight()
         self.bone_num = self.InitBoneNum()
-        print len(self.uvs)
     
+    # parameter of joints is Hash<Int->String>
     def SetupBoneWeight(self, skin_cluster, joints):
         weights = []
+        bone_num = []
         for vtx in self.names:
             joint_weights = []
-            for j in joints:
-                weight = cmds.skinPercent(skin_cluster, vtx, transform=j, q=True)
-                joint_weights.append(weight)
-            joint_weights.sort()
-            joint_weights.reverse()
+            for j in range(len(joints)):
+                weight = cmds.skinPercent(skin_cluster, vtx, transform=joints[j], q=True)
+                joint_weights += [[j, weight]]
+            #joint_weights.sort()
+            #joint_weights.reverse()
+            joint_weights = sorted(joint_weights, key=lambda x:x[1], reverse=True)
+            num = []
             if len(joint_weights) > 0:
-                weights.append(joint_weights[0])
+                weights += [joint_weights[0][1]]
+                num += [joint_weights[0][0]]
+                if len(joint_weights) > 1:
+                    num += [joint_weights[1][0]]
             else:
-                weights.append(1)
-        self.bone_weight = weights
-        print weights
+                weights += [1]
+                num += [0,0]
+            bone_num += [num]
+        self.bone_weights = weights
+        self.bone_num = bone_num
     
     def InitBoneNum(self):
         bone_num = []
@@ -144,6 +152,7 @@ class Vertex(BaseStructure):
 s = cmds.ls(sl=True)
 v = Vertex(s[0])
 v.SetupBoneWeight('skinCluster1', ['joint1', 'joint2', 'joint3'])
+print v.bone_weights
 
 #get selecting uv coordinate
 #print cmds.polyEditUV(q=True)
