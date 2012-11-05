@@ -608,11 +608,11 @@ class ExportBones(ExporterBase):
 # Export IK Class
 #------------------------------------------------
 class ExportIKs(ExporterBase):
-    def __init__(self, bin, data):
-        ExporterBase.__init__(self, bin, data)
+    def __init__(self, bin):
+        ExporterBase.__init__(self, bin, None)
 
     def Export(self):
-        pass
+        self.Word(0)
         
 #------------------------------------------------
 # Export Skins Class
