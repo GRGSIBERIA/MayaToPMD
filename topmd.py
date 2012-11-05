@@ -336,6 +336,7 @@ class Skin(BaseStructure):
         BaseStructure.__init__(self, model)
         self.names = skins
         self.skin_vertex = self.SetupSkinPositions()
+        self.skin_count = len(self.skin_vertex)
         
         # [0] -> index, [1] -> vector
         self.skin_indices_vertices = self.InvestigateIndicesFromVertices()        
@@ -345,10 +346,7 @@ class Skin(BaseStructure):
         self.base_indices_vertices = self.BuildBaseIndicesVertices()
         self.base_count = len(self.base_indices_vertices)
 
-        print self.skin_indices_vertices
         self.skin_indices_vertices = self.RebuildIndicesVerticesByBase()
-        print self.skin_indices_vertices
-        
         
     def RebuildIndicesVerticesByBase(self):
         base_iv = self.base_indices_vertices
@@ -438,7 +436,7 @@ class StructureWindow:
     def __init__(self):
         self.InitNames()
         self.vertex = Vertex(self.model)
-        self.face = Face(model, self.vertex)
+        self.face = Face(self.model, self.vertex)
         self.material = Material(self.model, self.face)
         self.bone = Bone(self.model, self.root_bone)
         self.skin = Skin(self.model, self.skin_names)
@@ -446,15 +444,15 @@ class StructureWindow:
     def InitNames(self):
         self.selected = cmds.ls(sl=True)
         try:
-            self.model = selected[0]
+            self.model = self.selected[0]
         except IndexError:
             raise "do not select objects"
         try:
-            self.root_bone = selected[1]
+            self.root_bone = self.selected[1]
         except IndexError:
             pass
         try:
-            self.skin_names = selected[2:]
+            self.skin_names = self.selected[2:]
         except IndexError:
             pass
 
@@ -462,14 +460,7 @@ cmds.select('pCube1')
 cmds.select('joint1', tgl=True)
 cmds.select('pCube2', tgl=True)
 cmds.select('pCube3', tgl=True)
-s = cmds.ls(sl=True)
-v = Vertex(s[0])
-f = Face(s[0], v)
-m = Material(s[0], f)
-b = Bone(s[0], s[1])
-
-sks = s[2:]
-sk = Skin(s[0], sks)
+w = StructureWindow()
 
 #get selecting uv coordinate
 #print cmds.polyEditUV(q=True)
