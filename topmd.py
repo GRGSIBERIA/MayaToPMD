@@ -336,8 +336,40 @@ class Skin(BaseStructure):
         BaseStructure.__init__(self, model)
         self.names = skins
         self.skin_vertex = self.SetupSkinPositions()
-        self.vert_count = self.CountVertexFromSkin()
-        print self.skin_vertex
+        
+        # [0] -> index, [1] -> vector
+        self.skin_indices_vertices = self.InvestigateIndicesFromVertices()
+        print self.skin_indices_vertices
+        
+        #self.vert_count = len(self.skin_indices_vertices)
+        
+    # return [0] is index, [1] is vector
+    def InvestigateIndicesFromVertices(self):
+        model_vtx_name = GetVerticesList(self.model)
+        model_vtx = []
+        for vtx in model_vtx_name:
+            model_vtx += [list(GetVertexPosition(vtx))]
+        
+        skin_vtx = self.skin_vertex
+        result_vec = []
+        for i in range(len(skin_vtx)):    # unit from skin
+            index_vec = {}
+            sorted_vec = []
+            for j in range(len(skin_vtx[i])):    # unit from vertices
+                vec = [0, 0, 0]
+                for k in range(3): vec[k] = skin_vtx[i][j][k] - model_vtx[j][k]
+            
+                move_count = 0
+                for k in range(3):
+                    if vec[k] > 0.00001:
+                        move_count += 1
+                if move_count > 0:
+                    index_vec[j] = vec
+                
+            for k,v in sorted(index_vec.items(), key=lambda x:x[0]):
+                sorted_vec += [[k,v]]
+            result_vec += [sorted_vec]
+        return result_vec
         
     def CountVertexFromSkin(self):
         pass
