@@ -1,4 +1,5 @@
 import maya.cmds as cmds
+from struct import *
 import re
 
 #-----------------------------------------------
@@ -484,28 +485,32 @@ class ExporterBase:
         self.data = data
         
     def Float(self, d):
-        bin.write(pack('<f', d))
+        self.bin.write(pack('<f', d))
     
     def UInt(self, d):
-        bin.write(pack('<I', d))
+        self.bin.write(pack('<I', d))
         
     def Int(self, d):
-        bin.write(pack('<i', d))
+        self.bin.write(pack('<i', d))
         
     def Word(self, d):
-        bin.write(pack('<H', d))
+        self.bin.write(pack('<H', d))
         
     def Words(self, arr):
         for d in arr: self.Word(d)
     
     def Byte(self, d):
-        bin.write(pack('<B', d))
+        self.bin.write(pack('<B', d))
         
     def DWord(self, d):
         self.UInt(d)
         
     def Char(self, d):
-        bin.write(pack('<b', d))
+        try:
+            d = ord(d)
+        except TypeError:
+            d = d
+        self.bin.write(pack('<b', d))
         
     def Floats(self, arr):
         for d in arr: self.Float(d)
@@ -520,8 +525,8 @@ class ExporterBase:
 # Export Header Class
 #------------------------------------------------
 class ExportHeader(ExporterBase):
-    def __init__(self, bin, data):
-        ExporterBase.__init__(self, bin, data)
+    def __init__(self, bin):
+        ExporterBase.__init__(self, bin, None)
         
     def Export(self):
         magic = 'Pmd'
@@ -532,6 +537,7 @@ class ExportHeader(ExporterBase):
         self.Char(0x00)
         for i in range(255): self.Char(0xFD)
         self.Char(0x00)
+        print 'export Header'
 
 #------------------------------------------------
 # Export Vertices Class
@@ -542,13 +548,14 @@ class ExportVertices(ExporterBase):
 
     def Export(self):
         self.DWord(self.data.count)
-        for i in self.data.count:
+        for i in range(self.data.count):
             self.Floats(self.data.positions[i])
             self.Floats(self.data.normals[i])
             self.Floats(self.data.uvs[i])
             self.Words(self.data.bone_num[i])
             self.Byte(int(self.data.bone_weights[i] * 100))
             self.Byte(self.data.edge_flag[i])
+        print 'export Vertex'
             
 #------------------------------------------------
 # Export Faces Class
@@ -561,6 +568,7 @@ class ExportFaces(ExporterBase):
         self.DWord(self.data.count)
         for triangle in self.data.vtx_indices:
             self.Words(triangle)
+        print 'export Face'
         
 #------------------------------------------------
 # Export Materials Class
@@ -583,6 +591,7 @@ class ExportMaterials(ExporterBase):
             self.Chars(self.data.file_name[i])
             for i in range(20-len(self.data.filename[i])):
                 self.Char(0)
+        print 'export Material'
                 
 #------------------------------------------------
 # Export Bones Class
@@ -596,13 +605,14 @@ class ExportBones(ExporterBase):
         null_words = []
         for i in range(20): null_words += [0]
         
-        for i in self.data.count:
+        for i in range(self.data.count):
             self.Chars(null_words)
             self.Word(self.data.parent[i])
             self.Word(0xFFFF)
             self.Byte(0)
             self.Word(0)
             self.Floats(self.data.bone_pos[i])
+        print 'export Bone'
 
 #------------------------------------------------
 # Export IK Class
@@ -613,6 +623,7 @@ class ExportIKs(ExporterBase):
 
     def Export(self):
         self.Word(0)
+        print 'export IK'
         
 #------------------------------------------------
 # Export Skins Class
@@ -644,19 +655,37 @@ class ExportSkins(ExporterBase):
         # skin
         for i in range(self.data.skin_count):
             WriteSkin(null_word, self.data.vert_count[i], 1, self.data.skin_indices_vertices[i])
+        print 'export Skin'
 
 #------------------------------------------------
 # Export Platform Class
 #------------------------------------------------
 class ExportPlatform:
-    def __init__(self):
-        pass
+    def __init__(self, fname, dwindow):
+        bin = open(fname, 'wb')
+        self.bin = bin
+        self.fname = fname
+        self.list = [ExportHeader(bin),
+            ExportVertices(bin, dwindow.vertex),
+            ExportFaces(bin, dwindow.face),
+            ExportMaterials(bin, dwindow.material),
+            ExportBones(bin, dwindow.bone),
+            ExportIKs(bin),
+            ExportSkins(bin, dwindow.skin)]
+        bin.close
+
+    def Export(self):
+        self.bin = open(self.fname, 'wb')
+        for l in self.list: l.Export()
+        self.bin.close
 
 cmds.select('pCube1')
 cmds.select('joint1', tgl=True)
 cmds.select('pCube2', tgl=True)
 cmds.select('pCube3', tgl=True)
 w = StructureWindow()
+e = ExportPlatform('export.pmd', w)
+e.Export()
 
 #get selecting uv coordinate
 #print cmds.polyEditUV(q=True)
