@@ -203,6 +203,13 @@ class Material(BaseStructure):
         self.diffuse = self.ToDiffuse()
         self.transparent = self.ToTransparent()
         self.face_count = self.CountFaceByMaterial(face)
+        self.ambient = self.InitAmbient()
+        
+    def InitAmbient(self):
+        amb = []
+        for i in materials:
+            amb += [[1.0, 1.0, 1.0]]
+        return amb
         
     def ToDiffuse(self):
         diffuse = []
@@ -228,8 +235,6 @@ s = cmds.ls(sl=True)
 v = Vertex(s[0])
 f = Face(s[0], v)
 m = Material(s[0], f)
-print m.materials
-print m.face_count
 
 #get selecting uv coordinate
 #print cmds.polyEditUV(q=True)
