@@ -281,14 +281,31 @@ class Material(BaseStructure):
 # Bone Class
 #------------------------------------------------
 class Bone(BaseStructure):
-    def __init__(self, model):
-        pass
+    def __init__(self, root):
+        cmds.select(root)
+        cmds.select(hierarchy=True)
+        self.names = cmds.ls(sl=True, l=True)
+        self.parent = self.BuildRelative()
+        print self.parent
+
+    def BuildRelative(self):
+        rel = []
+        for bone in self.names:
+            r = cmds.listRelatives(bone, p=True, f=True)
+            if r != None:
+                r = r[0]
+            else:
+                r = None
+            rel += [r]
+        return rel
 
 cmds.select('pCube1')
+cmds.select('joint1', tgl=True)
 s = cmds.ls(sl=True)
 v = Vertex(s[0])
 f = Face(s[0], v)
 m = Material(s[0], f)
+b = Bone(s[1])
 
 #get selecting uv coordinate
 #print cmds.polyEditUV(q=True)
