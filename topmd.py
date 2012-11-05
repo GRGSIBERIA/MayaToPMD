@@ -33,13 +33,14 @@ def GetIndex(name):
     return int(index)
 
 def GetIndices(name):
-    indices = name.split('     ')[2:]
-    indices[len(indices)-1] = indices[len(indices)-1].split(' ')[0]
-    for i in range(len(indices)):
-        indices[i] = int(indices[i])
-    return indices
+    r = re.compile('\d+')
+    vtx_list = r.findall(name)[1:]
+    for i in range(len(vtx_list)):
+        vtx_list[i] = int(vtx_list[i])
+    return vtx_list
 
 def GetVertexIndicesFromTriangle(f):
+    cmds.select(f)
     vtxs = cmds.polyInfo(fv=True)
     indices = []
     for vtx in vtxs:
@@ -156,8 +157,8 @@ class Vertex(BaseStructure):
 class Face(BaseStructure):
     def __init__(self, model, vertex):
         BaseStructure.__init__(self, model)
-        self.names = GetFaceList(model)
-        self.vtx_indices = BuildTriangleIntoIndices(vertex)
+        self.names = GetFacesList(model)
+        self.vtx_indices = self.BuildTriangleIntoIndices(vertex)
         self.count = len(self.vtx_indices)
         
     def BuildTriangleIntoIndices(self, vertex):
@@ -166,10 +167,11 @@ class Face(BaseStructure):
             indices += [GetVertexIndicesFromTriangle(name)]
         return indices
 
+cmds.select('pCube1')
 s = cmds.ls(sl=True)
 v = Vertex(s[0])
-v.SetupBoneWeight('skinCluster1', ['joint1', 'joint2', 'joint3'])
-print v.bone_weights
+f = Face(s[0], v)
+print f.vtx_indices
 
 #get selecting uv coordinate
 #print cmds.polyEditUV(q=True)
