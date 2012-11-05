@@ -532,18 +532,8 @@ class ExportVertices(ExporterBase):
             self.Floats(self.data.uvs[i])
             self.Words(self.data.bone_num[i])
             self.Byte(int(self.data.bone_weights[i] * 100))
-            self.Byte(
-"""
-        self.names = GetVerticesList(model)
-        self.uv_names = GetUVList(model)
-        self.indices = self.ToIndices()
-        self.positions = self.ToPositions()
-        self.normals = self.ToNormals()
-        self.uvs = self.ToUVs()
-        self.bone_weights = self.InitBoneWeight()
-        self.bone_num = self.InitBoneNum()
-        self.count = len(self.positions)
-"""
+            self.Byte(self.data.edge_flag[i])
+            
 #------------------------------------------------
 # Export Faces Class
 #------------------------------------------------
