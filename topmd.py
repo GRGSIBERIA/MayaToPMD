@@ -289,8 +289,15 @@ class Bone(BaseStructure):
         self.parent = self.BuildRelative()
         self.tail_pos_index = self.InitTailPosIndex()
         self.bone_type = self.InitBoneType()
+        self.ik_parent_bone_index = self.InitIKParentBone()
         self.bone_pos = self.ToBonePosition()
-        print self.bone_pos
+        print self.ik_parent_bone_index
+        
+    def InitIKParentBone(self):
+        ik = []
+        for bone in self.names:
+            ik += [0]
+        return ik
         
     def ToBonePosition(self):
         pos = []
