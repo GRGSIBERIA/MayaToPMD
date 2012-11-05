@@ -166,6 +166,7 @@ class Face(BaseStructure):
         self.vtx_indices = self.BuildTriangleIntoIndices(vertex)
         self.count = len(self.vtx_indices)
         self.materials_from_face = self.ToMaterialFromFace()
+        self.vtx_indices = self.SortingFaceByMaterial(self.materials_from_face)
         
     def BuildTriangleIntoIndices(self, vertex):
         indices = []
@@ -181,8 +182,17 @@ class Face(BaseStructure):
             materials += cmds.ls(sl=True)
         return materials
     
-    def SortingFaceByMaterial(self):
-        pass
+    def SortingFaceByMaterial(self, materials):
+        mhash = {}
+        for m in len(materials):
+            mhash[i] = materials[i]
+        sorted_mesh = []
+        for k,v in sorted(mhash.keys, key=lambda x:x[1]):
+            sorted_mesh += [[k,v]]
+        result = []
+        for smesh in sorted_mesh:    # sorting mesh by material
+            result += [self.vtx_indices[smesh[0]]]
+        return result
 
 #------------------------------------------------
 # Material Class
