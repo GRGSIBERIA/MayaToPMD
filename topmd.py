@@ -349,6 +349,7 @@ class Skin(BaseStructure):
         self.skin_indices_vertices = self.RebuildIndicesVerticesByBase()
         print self.skin_indices_vertices
         
+        
     def RebuildIndicesVerticesByBase(self):
         base_iv = self.base_indices_vertices
         skin_iv = self.skin_indices_vertices
@@ -358,7 +359,8 @@ class Skin(BaseStructure):
             for ivs in skin:
                 for bi, bv in enumerate(base_iv):
                     if bv[0] == ivs[0]:
-                        ivs[0] = bi                
+                        ivs[0] = bi
+        return skin_iv
         
     def GetModelVertices(self):
         model_vtx_name = GetVerticesList(self.model)
