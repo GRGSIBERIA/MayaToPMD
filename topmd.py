@@ -289,7 +289,14 @@ class Bone(BaseStructure):
         self.parent = self.BuildRelative()
         self.tail_pos_index = self.InitTailPosIndex()
         self.bone_type = self.InitBoneType()
-        print self.bone_type
+        self.bone_pos = self.ToBonePosition()
+        print self.bone_pos
+        
+    def ToBonePosition(self):
+        pos = []
+        for bone in self.names:
+            pos += cmds.getAttr(bone + '.translate')
+        return pos
         
     def InitBoneType(self):
         types = []
