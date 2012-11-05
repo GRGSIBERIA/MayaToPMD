@@ -208,7 +208,18 @@ class Material(BaseStructure):
         self.specularity = self.ToSpecularity()
         self.toon_index = self.InitToonIndex()
         self.edge_flag = self.InitEdgeFlag()
-        print self.edge_flag
+        self.file_name = self.ToFileName()
+        print self.file_name
+        
+    def ToFileName(self):
+        files = []
+        for mat in self.materials:
+            node = cmds.listConnections(mat, d=False, t='file')
+            if node != None:
+                files += [cmds.getAttr(node[0]+'.fileTextureName')]
+            else:
+                files += [u""]
+        return files
         
     def InitEdgeFlag(self):
         flag = []
@@ -297,6 +308,8 @@ m = Material(s[0], f)
 #cmds.hyperShade(smn=True)
 #m = cmds.ls(sl=True)
 #print m
+
+#print cmds.listConnections(m[0], d=False, type='file')
 #print cmds.getAttr(m[2] + '.specularColor')
 
 #get target weight
