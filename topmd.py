@@ -645,6 +645,13 @@ class ExportSkins(ExporterBase):
         for i in range(self.data.skin_count):
             WriteSkin(null_word, self.data.vert_count[i], 1, self.data.skin_indices_vertices[i])
 
+#------------------------------------------------
+# Export Platform Class
+#------------------------------------------------
+class ExportPlatform:
+    def __init__(self):
+        pass
+
 cmds.select('pCube1')
 cmds.select('joint1', tgl=True)
 cmds.select('pCube2', tgl=True)
