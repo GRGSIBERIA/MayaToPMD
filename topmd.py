@@ -285,8 +285,9 @@ class Bone(BaseStructure):
         cmds.select(root)
         cmds.select(hierarchy=True)
         self.names = cmds.ls(sl=True, l=True)
+        self.short = cmds.ls(sl=True)
         self.parent = self.BuildRelative()
-        print self.parent
+        
 
     def BuildRelative(self):
         rel = []
