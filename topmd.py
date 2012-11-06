@@ -482,45 +482,44 @@ class StructureWindow:
 # Exporter Base Class
 #------------------------------------------------
 class ExporterBase:
-    def __init__(self, bin, data):
-        self.bin = bin
+    def __init__(self, data):
         self.data = data
         
-    def Float(self, d):
-        self.bin.write(pack('<f', d))
+    def Float(self, bin, d):
+        bin.write(pack('<f', d))
     
-    def UInt(self, d):
-        self.bin.write(pack('<I', d))
+    def UInt(self, bin, d):
+        bin.write(pack('<I', d))
         
-    def Int(self, d):
-        self.bin.write(pack('<i', d))
+    def Int(self, bin, d):
+        bin.write(pack('<i', d))
         
-    def Word(self, d):
-        self.bin.write(pack('<H', d))
+    def Word(self, bin, d):
+        bin.write(pack('<H', d))
         
-    def Words(self, arr):
-        for d in arr: self.Word(d)
+    def Words(self, bin, arr):
+        for d in arr: self.Word(bin, d)
     
-    def Byte(self, d):
-        self.bin.write(pack('<B', d))
+    def Byte(self, bin, d):
+        bin.write(pack('<B', d))
         
-    def DWord(self, d):
-        self.UInt(d)
+    def DWord(self, bin, d):
+        self.UInt(bin, d)
         
-    def Char(self, d):
+    def Char(self, bin, d):
         try:
             d = ord(d)
         except TypeError:
             d = d
-        self.bin.write(pack('<b', d))
+        bin.write(pack('<b', d))
         
-    def Floats(self, arr):
-        for d in arr: self.Float(d)
+    def Floats(self, bin, arr):
+        for d in arr: self.Float(bin, d)
         
-    def Chars(self, arr):
-        for d in arr: self.Char(d)
+    def Chars(self, bin, arr):
+        for d in arr: self.Char(bin, d)
         
-    def Export(self):
+    def Export(self, bin):
         pass
         
     def Close(self):
@@ -530,184 +529,193 @@ class ExporterBase:
 # Export Header Class
 #------------------------------------------------
 class ExportHeader(ExporterBase):
-    def __init__(self, bin):
-        ExporterBase.__init__(self, bin, None)
+    def __init__(self):
+        ExporterBase.__init__(self, None)
         
-    def Export(self):
+    def Export(self, bin):
         print '-------------------'
         print 'exporting Header'
         magic = 'Pmd'
-        for c in magic: self.Char(c)
+        for c in magic: self.Char(bin, c)
         version = 1.00
-        self.Float(version)
-        self.Char(0x00)
-        for i in range(19): self.Char(0xFD)
-        self.Char(0x00)
-        for i in range(255): self.Char(0xFD)
+        self.Float(bin, version)
+        self.Char(bin, 0x00)
+        for i in range(19): self.Char(bin, 0xFD)
+        self.Char(bin, 0x00)
+        for i in range(255): self.Char(bin, 0xFD)
         print 'export Header'
 
 #------------------------------------------------
 # Export Vertices Class
 #------------------------------------------------
 class ExportVertices(ExporterBase):
-    def __init__(self, bin, data):
-        ExporterBase.__init__(self, bin, data)
+    def __init__(self, data):
+        ExporterBase.__init__(self, data)
 
-    def Export(self):
+    def Export(self, bin):
         print '-------------------'
         print 'exporting Vertices'
         print 'vertices count: ', self.data.count
-        self.DWord(self.data.count)
+        self.DWord(bin, self.data.count)
         for i in range(self.data.count):
-            self.Floats(self.data.positions[i])
-            self.Floats(self.data.normals[i])
-            self.Floats(self.data.uvs[i])
-            self.Words(self.data.bone_num[i])
-            self.Byte(int(self.data.bone_weights[i] * 100))
-            self.Byte(self.data.edge_flag[i])
+            self.Floats(bin, self.data.positions[i])
+            self.Floats(bin, self.data.normals[i])
+            self.Floats(bin, self.data.uvs[i])
+            self.Words(bin, self.data.bone_num[i])
+            self.Byte(bin, int(self.data.bone_weights[i] * 100))
+            self.Byte(bin, self.data.edge_flag[i])
             
 #------------------------------------------------
 # Export Faces Class
 #------------------------------------------------
 class ExportFaces(ExporterBase):
-    def __init__(self, bin, data):
-        ExporterBase.__init__(self, bin, data)
+    def __init__(self, data):
+        ExporterBase.__init__(self, data)
 
-    def Export(self):
+    def Export(self, bin):
         print '-------------------'
         print 'exporting Face'
         print 'faces count: ', self.data.count
-        self.DWord(self.data.count * 3)
+        self.DWord(bin, self.data.count * 3)
         for triangle in self.data.vtx_indices:
-            self.Words(triangle)
+            self.Words(bin, triangle)
         
 #------------------------------------------------
 # Export Materials Class
 #------------------------------------------------
 class ExportMaterials(ExporterBase):
-    def __init__(self, bin, data):
-        ExporterBase.__init__(self, bin, data)
+    def __init__(self, data):
+        ExporterBase.__init__(self, data)
 
-    def Export(self):
+    def Export(self, bin):
         print '-------------------'
         print 'exporting Material'
         print 'materials count: ', self.data.count
-        self.DWord(self.data.count)
+        self.DWord(bin, self.data.count)
         for i in range(self.data.count):
-            self.Floats(self.data.diffuse[i])
+            self.Floats(bin, self.data.diffuse[i])
             print 1.0-self.data.transparent[i]
-            self.Float(1.0-self.data.transparent[i])
-            self.Float(self.data.specularity[i])
-            self.Floats(self.data.specular[i])
+            self.Float(bin, 1.0-self.data.transparent[i])
+            self.Float(bin, self.data.specularity[i])
+            self.Floats(bin, self.data.specular[i])
             #self.Floats(self.data.ambient[i])
-            self.Floats([0.0,0.0,0.0])    # best
+            self.Floats(bin, [0.0,0.0,0.0])    # best
             #self.Byte(self.data.toon_index[i])
-            self.Byte(1)
-            self.Byte(self.data.edge_flag[i])
-            self.DWord(self.data.face_count[i]*3)
-            self.Chars(self.data.file_name[i])
+            self.Byte(bin, 0xFF)
+            self.Byte(bin, self.data.edge_flag[i])
+            self.DWord(bin, self.data.face_count[i]*3)
+            self.Chars(bin, self.data.file_name[i])
             for i in range(20-len(self.data.file_name[i])):
-                self.Char(0)
+                self.Char(bin, 0)
                 
 #------------------------------------------------
 # Export Bones Class
 #------------------------------------------------
 class ExportBones(ExporterBase):
-    def __init__(self, bin, data):
-        ExporterBase.__init__(self, bin, data)
+    def __init__(self, data):
+        ExporterBase.__init__(self, data)
 
-    def Export(self):
+    def Export(self, bin):
         print '-------------------'
         print 'exporting Bone'
-        self.Word(self.data.count)
-        null_words = []
-        for i in range(20): null_words += [0]
+        print 'bone count: ', self.data.count
+        self.Word(bin, self.data.count)
+        null_words = ['a', 'b', 'c', 0x00]
+        for i in range(16): null_words += [0xFD]
         
         for i in range(self.data.count):
-            self.Chars(null_words)
-            self.Word(self.data.parent[i])
-            self.Word(0xFFFF)
-            self.Byte(0)
-            self.Word(0)
-            self.Floats(self.data.bone_pos[i])
+            self.Chars(bin, null_words)
+            self.Word(bin, self.data.parent[i])
+            self.Word(bin, 0xFFFF)
+            self.Byte(bin, 0)
+            self.Word(bin, 0)
+            self.Floats(bin, self.data.bone_pos[i])
 
 #------------------------------------------------
 # Export IK Class
 #------------------------------------------------
 class ExportIKs(ExporterBase):
-    def __init__(self, bin):
-        ExporterBase.__init__(self, bin, None)
+    def __init__(self):
+        ExporterBase.__init__(self, None)
 
-    def Export(self):
+    def Export(self, bin):
         print '-------------------'
         print 'exporting IK'
-        self.Word(0)
+        self.Word(bin, 0)
         
 #------------------------------------------------
 # Export Skins Class
 #------------------------------------------------
 class ExportSkins(ExporterBase):
-    def __init__(self, bin, data):
-        ExporterBase.__init__(self, bin, data)
+    def __init__(self, data):
+        ExporterBase.__init__(self, data)
 
-    def WriteSkin(self, word, count, type, iv):
-        self.Chars(word)
-        self.Word(count)
-        self.Byte(type)
-        self.WriteVertex(count, iv)
+    def WriteSkin(self, bin, word, count, type, iv):
+        print '----'
+        print 'count: ', count
+        print 'type: ', type
+        self.Chars(bin, word)
+        self.DWord(bin, count)
+        self.Byte(bin, type)
+        self.WriteVertex(bin, count, iv)
         
-    def WriteVertex(self, count, vertex):
+    def WriteVertex(self, bin, count, vertex):
         for j in range(count):
-            self.DWord(vertex[j][0])
-            self.Floats(vertex[j][1])
+            self.DWord(bin, vertex[j][0])
+            self.Floats(bin, vertex[j][1])
+            print 'iv: ', vertex[j][0], vertex[j][1]
 
-    def Export(self):
+    def Export(self, bin):
         print '-------------------'
         print 'exporting Skin'
-        null_word = []
-        for i in range(20): null_word += [0]
+        null_word = ['a', 'c', 'x', 0]
+        for i in range(16): null_word += [0xFD]
         
-        self.Word(self.data.skin_count)
+        print 'skin count: ', self.data.skin_count+1
+        self.Word(bin, self.data.skin_count+1)
         
         # base
-        self.WriteSkin(null_word, self.data.base_count, 0, self.data.base_indices_vertices)
+        self.WriteSkin(bin, null_word, self.data.base_count, 0, self.data.base_indices_vertices)
         
         # skin
         for i in range(self.data.skin_count):
-            self.WriteSkin(null_word, self.data.vert_count[i], 1, self.data.skin_indices_vertices[i])
+            self.WriteSkin(bin, null_word, self.data.vert_count[i], 1, self.data.skin_indices_vertices[i])
 
 #------------------------------------------------
 # Export Platform Class
 #------------------------------------------------
 class ExportPlatform:
-    def __init__(self, fname, dwindow):
-        self.bin = open(fname, 'wb')
-        self.fname = fname
-        self.list = [ExportHeader(self.bin),
-            ExportVertices(self.bin, dwindow.vertex),
-            ExportFaces(self.bin, dwindow.face),
-            ExportMaterials(self.bin, dwindow.material),
-            ExportBones(self.bin, dwindow.bone),
-            ExportIKs(self.bin),
-            ExportSkins(self.bin, dwindow.skin)]
-        self.bin.close
+    def __init__(self, dwindow):
+        self.list = [ExportHeader(),
+            ExportVertices(dwindow.vertex),
+            ExportFaces(dwindow.face),
+            ExportMaterials(dwindow.material),
+            ExportBones(dwindow.bone),
+            ExportIKs(),
+            ExportSkins(dwindow.skin)]
 
-    def Export(self):
-        self.bin = open(self.fname, 'wb')
-        for l in self.list: l.Export()
-        self.bin.write(pack('<B', 0))
-        self.bin.write(pack('<B', 0))
-        self.bin.write(pack('<B', 0))
-        self.bin.close
-        for l in self.list: l.Close()
+    def Export(self, bin):
+        for l in self.list: l.Export(bin)
+        
+        print '-------------------'
+        print 'exporting Window'
+        bin.write(pack('<B', 0))
+        bin.write(pack('<B', 0))
+        bin.write(pack('<B', 0))
+        
+        print '-------------------'
+        print 'end'
 
 cmds.select('pCube1')
 cmds.select('joint1', tgl=True)
 cmds.select('pCube2', tgl=True)
 cmds.select('pCube3', tgl=True)
 w = StructureWindow()
-e = ExportPlatform('C:/export.pmd', w)
-e.Export()
+
+bin = open('C:/export.pmd', 'wb')
+e = ExportPlatform(w)
+e.Export(bin)
+bin.close
 
 #get selecting uv coordinate
 #print cmds.polyEditUV(q=True)
