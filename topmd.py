@@ -72,7 +72,6 @@ def GetPolyElementNameList(model, count, attr_name):
         attr.append(model + '.' + attr_name + '[' + str(c) + ']')
     return attr
 
-
 #------------------------------------------------
 # Structure Base
 #------------------------------------------------
