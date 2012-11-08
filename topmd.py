@@ -341,7 +341,6 @@ class Bone(BaseStructure):
             if r != None:
                 for j,p in enumerate(self.names):
                     if r[0] == p:
-                        print j
                         r = j
                         break
             else:
@@ -474,6 +473,7 @@ class StructureWindow:
         
     def InitNames(self):
         self.selected = cmds.ls(sl=True)
+        print 'selected: ', self.selected
         try:
             self.model = self.selected[0]
         except IndexError:
@@ -563,7 +563,6 @@ class ExportHeader(ExporterBase):
         magic = 'Pmd'
         for c in magic: self.Char(bin, c)
         self.Float(bin, 1.00)
-        #self.Char(bin, 0x00)
         
         model_name = self.ConvertStringIntoArray(self.model, 20)
         self.Chars(bin, model_name)
@@ -697,12 +696,15 @@ class ExportSkins(ExporterBase):
         print '-------------------'
         print 'exporting Skin'
         print 'skin count: ', self.data.skin_count+1
-
-        self.Word(bin, self.data.skin_count+1)
         
-        # base
-        base_name = self.ConvertStringIntoArray('base', 20)
-        self.WriteSkin(bin, base_name, self.data.base_count, 0, self.data.base_indices_vertices)
+        if self.data.skin_count < 1:
+            self.Word(bin, self.data.skin_count+1)
+        
+            # base
+            base_name = self.ConvertStringIntoArray('base', 20)
+            self.WriteSkin(bin, base_name, self.data.base_count, 0, self.data.base_indices_vertices)
+        else:
+            self.Word(0)    # not have skin
         
         # skin
         for i in range(self.data.skin_count):
