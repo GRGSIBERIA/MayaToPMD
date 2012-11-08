@@ -748,10 +748,13 @@ class ExportPlatform:
         print '-------------------'
         print 'end'
 
+"""
 cmds.select('pCube1')
 cmds.select('joint1', tgl=True)
 cmds.select('pCube2', tgl=True)
 cmds.select('pCube3', tgl=True)
+"""
+
 w = StructureWindow()
 
 bin = open('C:/export.pmd', 'wb')
