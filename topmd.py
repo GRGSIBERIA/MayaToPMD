@@ -481,7 +481,7 @@ class StructureWindow:
         try:
             self.root_bone = self.selected[1]
         except IndexError:
-            pass
+            self.root_bone = None
         try:
             self.skin_names = self.selected[2:]
         except IndexError:
@@ -642,20 +642,24 @@ class ExportBones(ExporterBase):
     def Export(self, bin):
         print '-------------------'
         print 'exporting Bone'
-        print 'bone count: ', self.data.count
-        self.Word(bin, self.data.count)
-        null_words = ['a', 'b', 'c', 0x00]
-        for i in range(16): null_words += [0xFD]
         
-        for i in range(self.data.count):
-            short_name = self.ConvertStringIntoArray(self.data.short[i], 20)
+        if self.data != None:
+            print 'bone count: ', self.data.count
+            self.Word(bin, self.data.count)
+            null_words = ['a', 'b', 'c', 0x00]
+            for i in range(16): null_words += [0xFD]
             
-            self.Chars(bin, short_name)
-            self.Word(bin, self.data.parent[i])
-            self.Word(bin, 0xFFFF)
-            self.Byte(bin, 0)
-            self.Word(bin, 0)
-            self.Floats(bin, self.data.bone_pos[i])
+            for i in range(self.data.count):
+                short_name = self.ConvertStringIntoArray(self.data.short[i], 20)
+                
+                self.Chars(bin, short_name)
+                self.Word(bin, self.data.parent[i])
+                self.Word(bin, 0xFFFF)
+                self.Byte(bin, 0)
+                self.Word(bin, 0)
+                self.Floats(bin, self.data.bone_pos[i])
+        else:
+            print 'do not have bones.'
 
 #------------------------------------------------
 # Export IK Class
