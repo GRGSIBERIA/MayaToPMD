@@ -9,71 +9,125 @@
         font-size: 16pt;
         /*color: #e12885;*/
         font-weight: bold;
-        }
+    }
+    div.section
+    {
+        margin-left: 20pt;
+    }
+    div.contents
+    {
+        margin-left: 20pt;
+    }
     -->
     </style>
 </head>
 <body bgcolor="#86cecb" text="#373b3e">
 	<h1>MayaToPMD 取扱い説明書</h1><br />
 
+    <div class="section">
+        <h2>はじめに</h2>
+        <div class="contents">
+            MayaToPMDはMayaからPMDファイルを出力するためのスクリプトです。<br />
+            ウェイト調整などを普段慣れているツールで省力化する目的で作りました。<br />
+            ボーンの設定や表示枠などはボーンの名前そのままなので注意してください。<br />
+            また、IKやConstraintなども無視されるので、<br />
+            使いたい方はPMD Editorで編集するようお願いします。<br />
+            <br />
+            あらかじめ操作手順/注意事項を読んでからお使いください。<br />
+            <font class="attn">失敗すると全部無駄になることがあります</font>。<br />
+            <br />
+        </div>
+    </div>
     
-    <h2>はじめに</h2>
-    MayaToPMDはMayaからPMDファイルを出力するためのスクリプトです。<br />
-    ウェイト調整などを普段慣れているツールで省力化する目的で作りました。<br />
-    ボーンの設定や表示枠などはボーンの名前そのままなので注意してください。<br />
-    また、IKやConstraintなども無視されるので、<br />
-    使いたい方はPMD Editorで編集するようお願いします。<br />
+    <div class="section">
+        <h2>注意事項まとめ</h2>
+        <div class="contents">
+            <ol>
+                <li>日本語の名前を使わない</li>
+                <li>モデリングの後はTriangulateをかける</li>
+                <li>頂点数は65,535個まで</li>
+                <li>モーフ元のモデルは弄らない</li>
+                <li>必ず一度はPMD Editorで編集してから保存する</li>
+            </ol>
+        </div>
+    </div>
 
-    あらかじめ操作手順/注意事項を読んでからお使いください。<br />
-    <font class="attn">失敗すると全部無駄になることがあります</font>。<br />
-    <br />
-    
-    <h2>操作手順/注意事項</h2>
-    MayaToPMDは操作によって出力に失敗するだけでなく、<br />
-    一部の工程が作り直しになってしまうパターンがあります。<br />
-    以下の工程を注意して読みながらモデルを作ってください。<br />
-    なお、すべての工程で<font class="attn">日本語を使ってはいけません</font>。<br />
-    <br />
+    <div class="section">
+        <h2>操作手順/注意事項</h2>
+        <div class="contents">
+            MayaToPMDは操作によって出力に失敗するだけでなく、<br />
+            一部の工程が作り直しになってしまうパターンがあります。<br />
+            以下の工程を注意して読みながらモデルを作ってください。<br />
+            なお、すべての工程で<font class="attn">日本語を使ってはいけません</font>。<br />
+            <br />
+        </div>
 
-    <h3>モデリング～テクスチャリング</h3>
-    モデリングからテクスチャリングまではどのツールを使っても問題ありません。<br />
-    作成したモデルをMudBoxやZBrushで着色したり、ディティールを掘り下げるのもOKです。<br />
-    ただし、<font class="attn">モデリングが終わったら必ずTriangulate</font>をかけてください。<br />
-    三角形ポリゴンでないと出力に失敗します。<br />
-    また、<font class="attn">頂点数は65,535個が限界</font>です。<br />
-    それ以下に調整してください。<br />
-    <br />
+        <div class="section">
+            <h3>モデリング～テクスチャリング</h3>
+            <div class="contents">
+                モデリングからテクスチャリングまではどのツールを使っても問題ありません。<br />
+                作成したモデルをMudBoxやZBrushで着色したり、ディティールを掘り下げるのもOKです。<br />
+                ただし、<font class="attn">モデリングが終わったら必ずTriangulate</font>をかけてください。<br />
+                三角形ポリゴンでないと出力に失敗します。<br />
+                また、<font class="attn">頂点数は65,535個が限界</font>です。<br />
+                それ以下に調整してください。<br />
+                <br />
+            </div>
+        </div>
 
-    <h3>ボーン</h3>
-    <b>ボーンの名前はできるだけ20文字以内</b>に抑えてください。<br />
-    IKやExpressionなどは無視されるので注意してください。<br />
-    <br />
+        <div class="section">
+            <h3>ボーン</h3>
+            <div class="contents">
+                <b>ボーンの名前はできるだけ20文字以内</b>に抑えてください。<br />
+                IKやExpressionなどは無視されるので注意してください。<br />
+                <br />
+            </div>
+        </div>
 
-    <h3>ウェイト</h3>
-    <font class="attn">Smooth Bind</font>を使ってください。<br />
-    この工程が終わったら必ずBind Poseでボーンを元の位置に戻してください。<br />
-    <br />
+        <div class="section">
+            <h3>ウェイト</h3>
+            <div class="contents">
+                <font class="attn">Smooth Bind</font>を使ってください。<br />
+                この工程が終わったら必ずBind Poseでボーンを元の位置に戻してください。<br />
+                <br />
+            </div>
+        </div>
 
-    <h3>モーフ</h3>
-    元となるモデルをDuplicateで複製し、<font class="attn">変形させたい頂点だけ移動</font>させてください。<br />
-    複製したモデルは好きな場所に置いてください。<br />
-    複製したモデルの移動させた頂点がモーフ先の対象になります。<br />
-    <b>元となるモデルの頂点を移動させると全部モーフ先になる</b>ので注意してください。<br />
+        <div class="section">
+            <h3>モーフ</h3>
+            <div class="contents">
+                元となるモデルをDuplicateで複製し、<font class="attn">変形させたい頂点だけ移動</font>させてください。<br />
+                複製したモデルは好きな場所に置いてください。<br />
+                複製したモデルの移動させた頂点がモーフ先の対象になります。<br />
+                <b>元となるモデルの頂点を移動させると全部モーフ先になる</b>ので注意してください。<br />
+                <br />
+            </div>
+        </div>
 
-    <h3>出力</h3>
-    Script Editorを開いてtopmd.pyのソースコードを貼り付けてください。<br />
-    Shelfなどに登録しておくと便利です。<br />
-    モデルデータ→ルートボーン→モーフモデル（複数選択可）の順で選択し、<br />
-    貼り付けたスクリプトを実行してください。<br />
-    <b>デフォルトではCドライブ直下にexport.pmdが作られます</b>。<br />
-    変更するには該当箇所のパスを変更してください。<br />
-    <br />
+        <div class="section">
+            <h3>出力</h3>
+            <div class="contents">
+                Script Editorを開いてtopmd.pyのソースコードを貼り付けてください。<br />
+                Shelfなどに登録しておくと便利です。<br />
+                モデルデータ→ルートボーン→モーフモデル（複数選択可）の順で選択し、<br />
+                貼り付けたスクリプトを実行してください。<br />
+                <b>デフォルトではCドライブ直下にexport.pmdが作られます</b>。<br />
+                変更するには該当箇所のパスを変更してください。<br />
+                <br />
+            </div>
+        </div>
 
-    <h3>PMD Editorでの編集/保存</h3>
-    PMD Editor（0.1.3.9で確認）で編集し、保存すれば完了です。<br />
-    特に、ボーンや表示枠などは編集しないと使い物になりません。<br />
-    出力したファイルをそのままMikuMikuDanceに読み込ませると、ほとんど動作しないので注意してください。<br />
-
+        <div class="section">
+            <h3>PMD Editorでの編集/保存</h3>
+            <div class="contents">
+                PMD Editor（0.1.3.9で確認）で<b>編集し、保存</b>すれば完了です。<br />
+                特に、ボーンや表示枠などは編集しないとボーンの名前がそのままなので使い物になりません。<br />
+                出力したファイルをそのままMikuMikuDanceに読み込ませると、<br />
+                PMD Editor側での修正がないためボーンの表示がおかしくなります。<br />
+                <br />
+            </div>
+        </div>
+    </div>
 </body>
 </html>
 
