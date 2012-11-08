@@ -712,7 +712,15 @@ class ExportSkinFrameForDisplayList(ExporterBase):
         ExporterBase.__init__(self, data)
         
     def Export(self, bin):
-        pass
+        print '-------------------'
+        print 'exporting Skin'
+        length = len(self.data.names)
+        self.Byte(bin, length)
+        print 'count: ', length
+        
+        for i in range(length):
+            self.Word(bin, i)
+            print 'index: ', i
 
 #------------------------------------------------
 # Export Platform Class
@@ -725,7 +733,8 @@ class ExportPlatform:
             ExportMaterials(dwindow.material),
             ExportBones(dwindow.bone),
             ExportIKs(),
-            ExportSkins(dwindow.skin)]
+            ExportSkins(dwindow.skin),
+            ExportSkinFrameForDisplayList(dwindow.skin)]
 
     def Export(self, bin):
         for l in self.list: l.Export(bin)
