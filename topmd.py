@@ -333,7 +333,11 @@ class Bone(BaseStructure):
         for i,bone in enumerate(self.names):
             r = cmds.listRelatives(bone, p=True, f=True)
             if r != None:
-                r = i
+                for j,p in enumerate(self.names):
+                    if r[0] == p:
+                        print j
+                        r = j
+                        break
             else:
                 r = 0xFFFF
             rel += [r]
@@ -518,6 +522,21 @@ class ExporterBase:
     def Chars(self, bin, arr):
         for d in arr: self.Char(bin, d)
         
+    def ConvertStringIntoArray(self, data, max_length):
+        name = []
+        for i in range(len(data)):
+            pusher = ord(data[i])
+            name += [int(pusher)]
+        name += [0]
+        
+        if len(name) > max_length:
+            name = name[:max_length-1]
+        
+        length = len(name)
+        for j in range(max_length-length):
+            name += [0xFD]
+        return name
+        
     def Export(self, bin):
         pass
         
@@ -528,21 +547,22 @@ class ExporterBase:
 # Export Header Class
 #------------------------------------------------
 class ExportHeader(ExporterBase):
-    def __init__(self):
+    def __init__(self, model):
         ExporterBase.__init__(self, None)
+        self.model = model
         
     def Export(self, bin):
         print '-------------------'
         print 'exporting Header'
         magic = 'Pmd'
         for c in magic: self.Char(bin, c)
-        version = 1.00
-        self.Float(bin, version)
-        self.Char(bin, 0x00)
-        for i in range(19): self.Char(bin, 0xFD)
-        self.Char(bin, 0x00)
-        for i in range(255): self.Char(bin, 0xFD)
-        print 'export Header'
+        self.Float(bin, 1.00)
+        #self.Char(bin, 0x00)
+        
+        model_name = self.ConvertStringIntoArray(self.model, 20)
+        self.Chars(bin, model_name)
+        caption = self.ConvertStringIntoArray('Exported by MayaToPMD', 256)
+        self.Chars(bin, caption)
 
 #------------------------------------------------
 # Export Vertices Class
@@ -623,7 +643,9 @@ class ExportBones(ExporterBase):
         for i in range(16): null_words += [0xFD]
         
         for i in range(self.data.count):
-            self.Chars(bin, null_words)
+            short_name = self.ConvertStringIntoArray(self.data.short[i], 20)
+            
+            self.Chars(bin, short_name)
             self.Word(bin, self.data.parent[i])
             self.Word(bin, 0xFFFF)
             self.Byte(bin, 0)
@@ -651,6 +673,7 @@ class ExportSkins(ExporterBase):
 
     def WriteSkin(self, bin, word, count, type, iv):
         print '----'
+        print 'name: ', word
         print 'count: ', count
         print 'type: ', type
         self.Chars(bin, word)
@@ -662,30 +685,35 @@ class ExportSkins(ExporterBase):
         for j in range(count):
             self.DWord(bin, vertex[j][0])
             self.Floats(bin, vertex[j][1])
-            print 'iv: ', vertex[j][0], vertex[j][1]
+            #print 'iv: ', vertex[j][0], vertex[j][1]
 
     def Export(self, bin):
         print '-------------------'
         print 'exporting Skin'
-        null_word = ['a', 'c', 'x', 0]
-        for i in range(16): null_word += [0xFD]
-        
         print 'skin count: ', self.data.skin_count+1
+
         self.Word(bin, self.data.skin_count+1)
         
         # base
-        self.WriteSkin(bin, null_word, self.data.base_count, 0, self.data.base_indices_vertices)
+        base_name = self.ConvertStringIntoArray('base', 20)
+        self.WriteSkin(bin, base_name, self.data.base_count, 0, self.data.base_indices_vertices)
         
         # skin
         for i in range(self.data.skin_count):
-            self.WriteSkin(bin, null_word, self.data.vert_count[i], 1, self.data.skin_indices_vertices[i])
+            skin_name = self.ConvertStringIntoArray(self.data.names[i], 20)
+            self.WriteSkin(bin, skin_name, self.data.vert_count[i], 1, self.data.skin_indices_vertices[i])
+
+#------------------------------------------------
+# Export Skin Window of View List
+#------------------------------------------------
+
 
 #------------------------------------------------
 # Export Platform Class
 #------------------------------------------------
 class ExportPlatform:
     def __init__(self, dwindow):
-        self.list = [ExportHeader(),
+        self.list = [ExportHeader(dwindow.model),
             ExportVertices(dwindow.vertex),
             ExportFaces(dwindow.face),
             ExportMaterials(dwindow.material),
