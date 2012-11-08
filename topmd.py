@@ -87,6 +87,9 @@ class Vertex(BaseStructure):
     def __init__(self, model):
         BaseStructure.__init__(self, model)
         self.names = GetVerticesList(model)
+        if len(self.names) > 65535:
+            raise "can't load vertices, over 65,535."
+        
         self.uv_names = GetUVList(model)
         self.indices = self.ToIndices()
         self.positions = self.ToPositions()
@@ -178,7 +181,10 @@ class Face(BaseStructure):
     def BuildTriangleIntoIndices(self, vertex):
         indices = []
         for name in self.names:
-            indices += [GetVertexIndicesFromTriangle(name)]
+            triangle = GetVertexIndicesFromTriangle(name)
+            if len(triangle) > 3:
+                raise "do not triangulate your model."
+            indices += [triangle]
         return indices
         
     def ToMaterialFromFace(self):
@@ -471,7 +477,7 @@ class StructureWindow:
         try:
             self.model = self.selected[0]
         except IndexError:
-            raise "do not select objects"
+            raise "do not select objects."
         try:
             self.root_bone = self.selected[1]
         except IndexError:
