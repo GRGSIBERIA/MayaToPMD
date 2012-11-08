@@ -704,9 +704,15 @@ class ExportSkins(ExporterBase):
             self.WriteSkin(bin, skin_name, self.data.vert_count[i], 1, self.data.skin_indices_vertices[i])
 
 #------------------------------------------------
-# Export Skin Window of View List
+# Export Display List for Skin Frame
 #------------------------------------------------
-
+class ExportSkinFrameForDisplayList(ExporterBase):
+    # data is Skin
+    def __init__(self, data):
+        ExporterBase.__init__(self, data)
+        
+    def Export(self, bin):
+        pass
 
 #------------------------------------------------
 # Export Platform Class
