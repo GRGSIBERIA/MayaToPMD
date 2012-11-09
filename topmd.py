@@ -582,12 +582,25 @@ class ExportVertices(ExporterBase):
         print 'vertices count: ', self.data.count
         self.DWord(bin, self.data.count)
         for i in range(self.data.count):
-            self.Floats(bin, self.data.positions[i])
+            pos = self.ReverceVector(self.data.positions[i])
+            self.Floats(bin, pos)
             self.Floats(bin, self.data.normals[i])
-            self.Floats(bin, self.data.uvs[i])
+            uvs = list(self.data.uvs[i])
+            #tmp = uvs[0]
+            #uvs[0] = uvs[1]    # reverce uv for mmd uv spacing
+            #uvs[1] = tmp
+            #uvs[1] = 1-uvs[1]
+            #print uvs
+            self.Floats(bin, uvs)
             self.Words(bin, self.data.bone_num[i])
             self.Byte(bin, int(self.data.bone_weights[i] * 100))
             self.Byte(bin, self.data.edge_flag[i])
+    
+    def ReverceVector(sel;f, v):
+        vec = list(v)
+        vec[2] = -vec[2]
+        print vec
+        return vec
             
 #------------------------------------------------
 # Export Faces Class
