@@ -699,16 +699,16 @@ class ExportSkins(ExporterBase):
     def Export(self, bin):
         print '-------------------'
         print 'exporting Skin'
-        print 'skin count: ', self.data.skin_count+1
+        print 'skin count: ', self.data.skin_count
         
-        if self.data.skin_count < 1:
+        if self.data.skin_count > 0:
             self.Word(bin, self.data.skin_count+1)
         
             # base
             base_name = self.ConvertStringIntoArray('base', 20)
             self.WriteSkin(bin, base_name, self.data.base_count, 0, self.data.base_indices_vertices)
         else:
-            self.Word(0)    # not have skin
+            self.Word(bin, 0)    # not have skin
         
         # skin
         for i in range(self.data.skin_count):
@@ -725,7 +725,7 @@ class ExportSkinFrameForDisplayList(ExporterBase):
         
     def Export(self, bin):
         print '-------------------'
-        print 'exporting Skin'
+        print 'exporting Display List for Skin Frame'
         length = len(self.data.names)
         self.Byte(bin, length)
         print 'count: ', length
