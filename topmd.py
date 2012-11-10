@@ -549,6 +549,11 @@ class ExporterBase:
     def Close(self):
         self.bin.close
         
+    def ReverseVector(self, v):
+        vec = list(v)
+        vec[2] = -vec[2]
+        return vec
+        
 #------------------------------------------------
 # Export Header Class
 #------------------------------------------------
@@ -593,11 +598,6 @@ class ExportVertices(ExporterBase):
             self.Words(bin, self.data.bone_num[i])
             self.Byte(bin, int(self.data.bone_weights[i] * 100))
             self.Byte(bin, self.data.edge_flag[i])
-    
-    def ReverseVector(self, v):
-        vec = list(v)
-        vec[2] = -vec[2]
-        return vec
             
 #------------------------------------------------
 # Export Faces Class
