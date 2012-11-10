@@ -591,7 +591,11 @@ class ExportVertices(ExporterBase):
             self.Floats(bin, pos)
             
             self.Floats(bin, self.data.normals[i])
-            self.Floats(bin, self.data.uvs[i])
+            
+            uvs = list(self.data.uvs[i])
+            uvs[1] = 1.0-uvs[1]
+            self.Floats(bin, uvs)
+            
             self.Words(bin, self.data.bone_num[i])
             self.Byte(bin, int(self.data.bone_weights[i] * 100))
             self.Byte(bin, self.data.edge_flag[i])
@@ -672,6 +676,8 @@ class ExportBones(ExporterBase):
                 self.Word(bin, 0xFFFF)
                 self.Byte(bin, 0)
                 self.Word(bin, 0)
+                
+                pos = self.ReverseVector(self.data.bone_pos[i])
                 self.Floats(bin, self.data.bone_pos[i])
         else:
             print 'do not have bones.'
