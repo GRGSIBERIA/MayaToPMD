@@ -11,7 +11,6 @@ def GetAssinedMaterialNodeFromModel(model):
     return cmds.ls(sl=True)
 
 def GetUVCoordinate(uv):
-    cmds.select(uv)
 #    return cmds.polyEditUV(q=True)
     return cmds.getAttr(uv)[0]
 
@@ -586,7 +585,7 @@ class ExportVertices(ExporterBase):
         print 'exporting Vertices'
         print 'vertices count: ', self.data.count
         self.DWord(bin, self.data.count)
-        for i in range(self.data.count):
+        for v,i in enumerate(range(self.data.count)):
             pos = self.ReverseVector(self.data.positions[i])
             self.Floats(bin, pos)
             
@@ -595,6 +594,7 @@ class ExportVertices(ExporterBase):
             uvs = list(self.data.uvs[i])
             uvs[1] = 1.0-uvs[1]
             self.Floats(bin, uvs)
+            print v, self.data.uvs[i], uvs
             
             self.Words(bin, self.data.bone_num[i])
             self.Byte(bin, int(self.data.bone_weights[i] * 100))
