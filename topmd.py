@@ -582,24 +582,21 @@ class ExportVertices(ExporterBase):
         print 'vertices count: ', self.data.count
         self.DWord(bin, self.data.count)
         for i in range(self.data.count):
-            pos = self.ReverceVector(self.data.positions[i])
+            pos = self.ReverseVector(self.data.positions[i])
             self.Floats(bin, pos)
+            
             self.Floats(bin, self.data.normals[i])
+            
             uvs = list(self.data.uvs[i])
-            #tmp = uvs[0]
-            #uvs[0] = uvs[1]    # reverce uv for mmd uv spacing
-            #uvs[1] = tmp
-            #uvs[1] = 1-uvs[1]
-            #print uvs
             self.Floats(bin, uvs)
+            
             self.Words(bin, self.data.bone_num[i])
             self.Byte(bin, int(self.data.bone_weights[i] * 100))
             self.Byte(bin, self.data.edge_flag[i])
     
-    def ReverceVector(sel;f, v):
+    def ReverseVector(self, v):
         vec = list(v)
         vec[2] = -vec[2]
-        print vec
         return vec
             
 #------------------------------------------------
@@ -615,7 +612,15 @@ class ExportFaces(ExporterBase):
         print 'faces count: ', self.data.count
         self.DWord(bin, self.data.count * 3)
         for triangle in self.data.vtx_indices:
-            self.Words(bin, triangle)
+            # swap triangle order, it's different from MMD.
+            self.Words(bin, self.Swap(triangle))
+
+    def Swap(self, triangle):
+        tri = list(triangle)
+        tmp = tri[0]
+        tri[0] = tri[2]
+        tri[2] = tmp
+        return tri
         
 #------------------------------------------------
 # Export Materials Class
