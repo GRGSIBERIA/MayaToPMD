@@ -591,10 +591,7 @@ class ExportVertices(ExporterBase):
             self.Floats(bin, pos)
             
             self.Floats(bin, self.data.normals[i])
-            
-            uvs = list(self.data.uvs[i])
-            self.Floats(bin, uvs)
-            
+            self.Floats(bin, self.data.uvs[i])
             self.Words(bin, self.data.bone_num[i])
             self.Byte(bin, int(self.data.bone_weights[i] * 100))
             self.Byte(bin, self.data.edge_flag[i])
