@@ -11,7 +11,6 @@ def GetAssinedMaterialNodeFromModel(model):
     return cmds.ls(sl=True)
 
 def GetUVCoordinate(uv):
-#    return cmds.polyEditUV(q=True)
     return cmds.getAttr(uv)[0]
 
 def GetVertexNormal(vtx):
@@ -94,22 +93,42 @@ class Vertex(BaseStructure):
         self.uvs = self.ToUVs()
         self.bone_weights = self.InitBoneWeight()
         self.bone_num = self.InitBoneNum()
-        self.count = len(self.positions)
         self.edge_flag = self.InitEdgeFlag()
         
+        self.prev_vtx_count = len(self.position)
         self.uv_from_vtx = self.StudyAssignUVFromVertices()
-        print self.uv_from_vtx
         self.popout_uvs = self.PopOutUVsStudyList(self.uv_from_vtx)
-    
-    def SortingToRestVertices(self):
-        for ufv in self.uv_from_vertices:
-            for uvs in ufv[2]:
-                pass
+        self.uvs = self.AppendToRestUVFromStudyList()
+
+        self.AppendToRestElementsFromPopout()
+        self.count = len(self.positions)
+        self.AppendToRestIndicesFromPopout()
+
+    def AppendToRestElementsFromPopout(self):
+        for vcu in self.popout_uvs:
+            vi = vcu[0]
+            for cnt in range(vcu[1]):
+                self.positions += [self.positions[vi]]
+                self.normals += [self.normals[vi]]
+                self.bone_weights += [self.bone_weights[vi]]
+                self.bone_num = [self.bone_num[vi]]
+                self.edge_flag = [self.edge_flag[vi]]
+
+    def AppendToRestUVFromStudyList(self):
+        sorted = []
+        for ufv in self.uv_from_vtx:
+            sorted += [ufv[0]]
+        
+        for vcf in self.popout_uvs:
+            vtx_index = vcf[0]
+            for uvs in vcf[2]:
+                sorted += [uvs]
+        return sorted
     
     def StudyAssignUVFromVertices(self):
         r = re.compile('.map')
         uv_from_vertices = []
-        for vtx_name in self.names:
+        for vtx_name in self.names:    # vtx_index -> uvs
             uvs = cmds.polyListComponentConversion(vtx_name, tuv=True)
             for i in range(len(uvs)):
                 uvs[i] = r.sub('.uv', uvs[i])
@@ -122,10 +141,8 @@ class Vertex(BaseStructure):
         pop_out_uv = []
         for i, vtx_uv in enumerate(uv_from_vtx):
             if len(vtx_uv) > 1:
-                pop_out_uv += [[i, len(vtx_uv), vtx_uv]]
-                print [i, len(vtx_uv), vtx_uv]
+                pop_out_uv += [[i, len(vtx_uv)-1, vtx_uv[1:]]]
         return pop_out_uv
-            
     
     def InitEdgeFlag(self):
         flag = []
