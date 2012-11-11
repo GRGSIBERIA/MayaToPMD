@@ -98,6 +98,13 @@ class Vertex(BaseStructure):
         self.edge_flag = self.InitEdgeFlag()
         
         self.uv_from_vtx = self.StudyAssignUVFromVertices()
+        print self.uv_from_vtx
+        self.popout_uvs = self.PopOutUVsStudyList(self.uv_from_vtx)
+    
+    def SortingToRestVertices(self):
+        for ufv in self.uv_from_vertices:
+            for uvs in ufv[2]:
+                pass
     
     def StudyAssignUVFromVertices(self):
         r = re.compile('.map')
@@ -106,16 +113,17 @@ class Vertex(BaseStructure):
             uvs = cmds.polyListComponentConversion(vtx_name, tuv=True)
             for i in range(len(uvs)):
                 uvs[i] = r.sub('.uv', uvs[i])
-                uvs[i] = GetUVCoordinate(uvs[i])
-            uv_from_vertices += uvs
+                uvs[i] = list(GetUVCoordinate(uvs[i]))
+            uv_from_vertices += [uvs]
         return uv_from_vertices
         
     # [vtx_index, uv_length, vertex_from_uv]
-    def PopOutUVsStudyList(self):
+    def PopOutUVsStudyList(self, uv_from_vtx):
         pop_out_uv = []
-        for i, vtx_uv in enumerate(self.uv_from_vtx):
+        for i, vtx_uv in enumerate(uv_from_vtx):
             if len(vtx_uv) > 1:
-                pop_count_uv += [[i, len(vtx_uv), vtx_uv]]
+                pop_out_uv += [[i, len(vtx_uv), vtx_uv]]
+                print [i, len(vtx_uv), vtx_uv]
         return pop_out_uv
             
     
