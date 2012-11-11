@@ -100,14 +100,24 @@ class Vertex(BaseStructure):
         self.uv_from_vtx = self.StudyAssignUVFromVertices()
     
     def StudyAssignUVFromVertices(self):
+        r = re.compile('.map')
         uv_from_vertices = []
         for vtx_name in self.names:
             uvs = cmds.polyListComponentConversion(vtx_name, tuv=True)
-            for i,uv in enumerate(uvs):
-                uvs[i] = uvs[i].replace('.map', '.uv')
+            for i in range(len(uvs)):
+                uvs[i] = r.sub('.uv', uvs[i])
+                uvs[i] = GetUVCoordinate(uvs[i])
             uv_from_vertices += uvs
         return uv_from_vertices
-                
+        
+    # [vtx_index, uv_length, vertex_from_uv]
+    def PopOutUVsStudyList(self):
+        pop_out_uv = []
+        for i, vtx_uv in enumerate(self.uv_from_vtx):
+            if len(vtx_uv) > 1:
+                pop_count_uv += [[i, len(vtx_uv), vtx_uv]]
+        return pop_out_uv
+            
     
     def InitEdgeFlag(self):
         flag = []
