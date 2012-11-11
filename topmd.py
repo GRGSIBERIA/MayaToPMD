@@ -62,7 +62,7 @@ def GetFacesList(model):
     return GetPolyElementNameList(model, count, 'f')
     
 def GetUVList(model):
-    count = cmds.polyEvaluate(model, v=True)
+    count = cmds.polyEvaluate(model, uv=True)
     return GetPolyElementNameList(model, count, 'uv')
 
 def GetPolyElementNameList(model, count, attr_name):
@@ -162,6 +162,7 @@ class Vertex(BaseStructure):
     def ToUVs(self):
         uvs = []
         for name in self.uv_names:
+            print name
             uvs.append(GetUVCoordinate(name))
         return uvs
 
