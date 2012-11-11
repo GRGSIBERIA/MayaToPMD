@@ -834,10 +834,12 @@ cmds.select('pCube3', tgl=True)
 
 w = StructureWindow()
 
+"""
 bin = open('C:/export.pmd', 'wb')
 e = ExportPlatform(w)
 e.Export(bin)
 bin.close
+"""
 
 #get selecting uv coordinate
 #print cmds.polyEditUV(q=True)
