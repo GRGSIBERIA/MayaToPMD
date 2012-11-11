@@ -95,14 +95,14 @@ class Vertex(BaseStructure):
         self.bone_num = self.InitBoneNum()
         self.edge_flag = self.InitEdgeFlag()
         
-        self.prev_vtx_count = len(self.position)
+        self.prev_vtx_count = len(self.positions)
         self.uv_from_vtx = self.StudyAssignUVFromVertices()
         self.popout_uvs = self.PopOutUVsStudyList(self.uv_from_vtx)
         self.uvs = self.AppendToRestUVFromStudyList()
 
         self.AppendToRestElementsFromPopout()
         self.count = len(self.positions)
-        self.AppendToRestIndicesFromPopout()
+        self.AppendToRestElementsFromPopout()
 
     def AppendToRestElementsFromPopout(self):
         for vcu in self.popout_uvs:
@@ -110,9 +110,9 @@ class Vertex(BaseStructure):
             for cnt in range(vcu[1]):
                 self.positions += [self.positions[vi]]
                 self.normals += [self.normals[vi]]
-                self.bone_weights += [self.bone_weights[vi]]
-                self.bone_num = [self.bone_num[vi]]
-                self.edge_flag = [self.edge_flag[vi]]
+                self.bone_weights += [100]
+                self.bone_num = [[0,0]]    # bone num
+                self.edge_flag = [1]    # edge flag
 
     def AppendToRestUVFromStudyList(self):
         sorted = []
@@ -146,7 +146,7 @@ class Vertex(BaseStructure):
     
     def InitEdgeFlag(self):
         flag = []
-        for i in range(self.count): flag += [1]
+        for i in range(len(self.positions)): flag += [1]
         return flag
     
     # parameter of joints is Hash<Int->String>
@@ -222,10 +222,31 @@ class Face(BaseStructure):
         self.materials_from_face = self.ToMaterialFromFace()
         self.vtx_indices = self.SortingFaceByMaterial(self.materials_from_face)
         
+    def CreateIndicesFromFaceNameToUVNames(self, uv):
+        uv_indices = re.search('\[(\d+|\d+:\d+)\]', uv)
+        uv_indices = uv_indices.group().rstrip(']').lstrip('[').split(':')
+        for i, uv in enumerate(uv_indices):
+            uv_indices[i] = int(uv_indices[i])
+        if len(uv_indices) > 1:
+            diff = uv_indices[1] - uv_indices[0] - 1
+            tmp = uv_indices[1]
+            del uv_indices[1]
+            for i in range(diff):
+                uv_indices += [uv_indices + i + 1]
+            uv_indices += [tmp]
+        return uv_indices
+    
+    def SearchFaceToUVForUVIndices(self, face_name):
+        face_to_uvs_name = cmds.polyListComponentConversion(face_name, tuv=True)
+        face_to_uvs = []
+        for uv in face_to_uvs_name:    # search maps
+            face_to_uvs += self.CreateIndicesFromFaceNameToUVNames(uv)
+        return face_to_uvs
+    
     def BuildTriangleIntoIndices(self, vertex):
         indices = []
-        for name in self.names:
-            triangle = GetVertexIndicesFromTriangle(name)
+        for face_name in self.names:
+            triangle = SearchFaceToUVForUVIndices(face_name)
             if len(triangle) > 3:
                 raise "do not triangulate your model."
             indices += [triangle]
