@@ -86,10 +86,8 @@ class Vertex(BaseStructure):
     def __init__(self, model):
         BaseStructure.__init__(self, model)
         self.names = GetVerticesList(model)
-        if len(self.names) > 65535:
-            raise "can't load vertices, over 65,535."
-        
         self.uv_names = GetUVList(model)
+        
         self.indices = self.ToIndices()
         self.positions = self.ToPositions()
         self.normals = self.ToNormals()
@@ -98,6 +96,18 @@ class Vertex(BaseStructure):
         self.bone_num = self.InitBoneNum()
         self.count = len(self.positions)
         self.edge_flag = self.InitEdgeFlag()
+        
+        self.uv_from_vtx = self.StudyAssignUVFromVertices()
+    
+    def StudyAssignUVFromVertices(self):
+        uv_from_vertices = []
+        for vtx_name in self.names:
+            uvs = cmds.polyListComponentConversion(vtx_name, tuv=True)
+            for i,uv in enumerate(uvs):
+                uvs[i] = uvs[i].replace('.map', '.uv')
+            uv_from_vertices += uvs
+        return uv_from_vertices
+                
     
     def InitEdgeFlag(self):
         flag = []
@@ -162,7 +172,6 @@ class Vertex(BaseStructure):
     def ToUVs(self):
         uvs = []
         for name in self.uv_names:
-            print name
             uvs.append(GetUVCoordinate(name))
         return uvs
 
@@ -595,7 +604,6 @@ class ExportVertices(ExporterBase):
             uvs = list(self.data.uvs[i])
             uvs[1] = 1.0-uvs[1]
             self.Floats(bin, uvs)
-            print v, self.data.uvs[i], uvs
             
             self.Words(bin, self.data.bone_num[i])
             self.Byte(bin, int(self.data.bone_weights[i] * 100))
