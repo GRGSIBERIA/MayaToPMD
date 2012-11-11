@@ -248,7 +248,7 @@ class Face(BaseStructure):
         for face_name in self.names:
             triangle = SearchFaceToUVForUVIndices(face_name)
             if len(triangle) > 3:
-                raise "do not triangulate your model."
+                raise StandardError, "do not triangulate your model."
             indices += [triangle]
         return indices
         
