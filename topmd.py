@@ -98,10 +98,12 @@ class Vertex(BaseStructure):
         self.names = GetVerticesList(model)
         self.uv_names = self.GetUVNameList()
         self.uv_maps = self.GetUVMapList()
+        self.uv_count = len(self.uv_names)
+        self.vertex_count = cmds.polyEvaluate(model, v=True)
         
         self.uvs = self.ToUVs()
-        self.uv_to_vtx_indices = self.BuildVertexIndicesFromUVName()
-        self.vtx_to_uv_indices = self.BuildUVIndicesFromVertexName()
+        self.maps_to_vtx = self.BuildVertexIndicesFromMaps()
+        self.vtx_to_map= self.BuildMapIndicesFromVertexNames()
         
         self.indices = self.ToIndices()
         self.positions = self.ToPositions()
@@ -113,12 +115,18 @@ class Vertex(BaseStructure):
         
         self.count = len(self.positions)
     
-    def BuildVertexIndicesFromUVName(self):
-        uv_count = len(self.uvs)
-        vtx_indices = {}
-        for i in range(uv_count):
-            vtx_indices[i] = cmds.polyListComponentConversion(self.uv_maps[i], tv=True)
-        print vtx_indices
+    def BuildMapIndicesFromVertexNames(self):
+        vtx_to_map = {}
+        for i in range(self.vertex_count):
+            vtx_to_map[self.names[i]] = cmds.polyListComponentConversion(self.names[i], tuv=True)
+        print vtx_to_map
+    
+    def BuildVertexIndicesFromMaps(self):
+        map_to_vtx = {}
+        for i in range(self.uv_count):
+            to_vtx_name = cmds.polyListComponentConversion(self.uv_maps[i], tv=True)
+            map_to_vtx[self.uv_maps[i]] = to_vtx_name[0]
+        print map_to_vtx
     
     def InitEdgeFlag(self):
         flag = []
