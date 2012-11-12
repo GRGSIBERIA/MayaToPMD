@@ -134,26 +134,26 @@ class Vertex(BaseStructure):
     
     # parameter of joints is Hash<Int->String>
     def SetupBoneWeight(self, skin_cluster, joints):
-        weights = []
-        bone_num = []
-        for vtx in self.names:
+        weights = [None] * self.uv_counts
+        bone_num = [None] * self.uv_counts
+        for map,vtx in self.map_to_vtx.items():
             joint_weights = []
             for j in range(len(joints)):
                 weight = cmds.skinPercent(skin_cluster, vtx, transform=joints[j], q=True)
                 joint_weights += [[j, weight]]
-            #joint_weights.sort()
-            #joint_weights.reverse()
+            
             joint_weights = sorted(joint_weights, key=lambda x:x[1], reverse=True)
             num = []
+            index = GetIndex(map)
             if len(joint_weights) > 0:
-                weights += [joint_weights[0][1]]
+                weights[index] = joint_weights[0][1]
                 num += [joint_weights[0][0]]
                 if len(joint_weights) > 1:
                     num += [joint_weights[1][0]]
             else:
-                weights += [1]
+                weights[index] = 1
                 num += [0,0]
-            bone_num += [num]
+            bone_num[index] = num
         self.bone_weights = weights
         self.bone_num = bone_num
     
