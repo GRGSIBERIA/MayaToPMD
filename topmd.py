@@ -78,6 +78,14 @@ class BaseStructure:
         self.model = model
         self.names = None
 
+    def GetUVNameList(self):
+        uv_count = cmds.polyEvaluate(self.model, uv=True)
+        uv_name_list = []
+        for i in range(uv_count):
+            uv_name_list += [self.model + '.uv[' + str(i) + ']']
+            print uv_name_list[i]
+        return uv_name_list
+
 #------------------------------------------------
 # Vertex Class
 #------------------------------------------------
@@ -85,65 +93,22 @@ class Vertex(BaseStructure):
     def __init__(self, model):
         BaseStructure.__init__(self, model)
         self.names = GetVerticesList(model)
-        self.uv_names = GetUVList(model)
+        self.uv_names = self.GetUVNameList()
+        
+        self.uvs = self.ToUVs()
+        self.uv_to_vtx_indices = self.BuildUVToVertex()
         
         self.indices = self.ToIndices()
         self.positions = self.ToPositions()
         self.normals = self.ToNormals()
-        self.uvs = self.ToUVs()
+        
         self.bone_weights = self.InitBoneWeight()
         self.bone_num = self.InitBoneNum()
         self.edge_flag = self.InitEdgeFlag()
         
-        self.prev_vtx_count = len(self.positions)
-        self.uv_from_vtx = self.StudyAssignUVFromVertices()
-        self.popout_uvs = self.PopOutUVsStudyList(self.uv_from_vtx)
-        self.uvs = self.AppendToRestUVFromStudyList()
-
-        self.AppendToRestElementsFromPopout()
         self.count = len(self.positions)
-        self.AppendToRestElementsFromPopout()
-
-    def AppendToRestElementsFromPopout(self):
-        for vcu in self.popout_uvs:
-            vi = vcu[0]
-            for cnt in range(vcu[1]):
-                self.positions += [self.positions[vi]]
-                self.normals += [self.normals[vi]]
-                self.bone_weights += [100]
-                self.bone_num = [[0,0]]    # bone num
-                self.edge_flag = [1]    # edge flag
-
-    def AppendToRestUVFromStudyList(self):
-        sorted = []
-        for ufv in self.uv_from_vtx:
-            sorted += [ufv[0]]
-        
-        for vcf in self.popout_uvs:
-            vtx_index = vcf[0]
-            for uvs in vcf[2]:
-                sorted += [uvs]
-        return sorted
     
-    def StudyAssignUVFromVertices(self):
-        r = re.compile('.map')
-        uv_from_vertices = []
-        for vtx_name in self.names:    # vtx_index -> uvs
-            uvs = cmds.polyListComponentConversion(vtx_name, tuv=True)
-            for i in range(len(uvs)):
-                uvs[i] = r.sub('.uv', uvs[i])
-                uvs[i] = list(GetUVCoordinate(uvs[i]))
-            uv_from_vertices += [uvs]
-        return uv_from_vertices
         
-    # [vtx_index, uv_length, vertex_from_uv]
-    def PopOutUVsStudyList(self, uv_from_vtx):
-        pop_out_uv = []
-        for i, vtx_uv in enumerate(uv_from_vtx):
-            if len(vtx_uv) > 1:
-                pop_out_uv += [[i, len(vtx_uv)-1, vtx_uv[1:]]]
-        return pop_out_uv
-    
     def InitEdgeFlag(self):
         flag = []
         for i in range(len(self.positions)): flag += [1]
@@ -207,7 +172,7 @@ class Vertex(BaseStructure):
     def ToUVs(self):
         uvs = []
         for name in self.uv_names:
-            uvs.append(GetUVCoordinate(name))
+            uvs += [GetUVCoordinate(name)]
         return uvs
 
 #------------------------------------------------
@@ -246,7 +211,7 @@ class Face(BaseStructure):
     def BuildTriangleIntoIndices(self, vertex):
         indices = []
         for face_name in self.names:
-            triangle = SearchFaceToUVForUVIndices(face_name)
+            triangle = self.SearchFaceToUVForUVIndices(face_name)
             if len(triangle) > 3:
                 raise StandardError, "do not triangulate your model."
             indices += [triangle]
