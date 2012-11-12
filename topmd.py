@@ -94,7 +94,7 @@ class BaseStructure:
 class Vertex(BaseStructure):
     def __init__(self, model):
         BaseStructure.__init__(self, model)
-        self.names = GetVerticesList(model)
+        self.vtx_names = GetVerticesList(model)
         self.uv_names = self.GetUVNameList()
         self.uv_maps = self.GetUVMapList()
         self.uv_count = len(self.uv_names)
@@ -104,7 +104,7 @@ class Vertex(BaseStructure):
         self.map_to_vtx = self.BuildVertexIndicesFromMaps()
         self.vtx_to_map= self.BuildMapIndicesFromVertexNames()
         
-        self.indices = self.ToIndices()
+        #self.indices = self.ToIndices()
         self.positions = self.ToPositions()
         self.normals = self.ToNormals()
         
@@ -117,7 +117,7 @@ class Vertex(BaseStructure):
     def BuildMapIndicesFromVertexNames(self):
         vtx_to_map = {}
         for i in range(self.vertex_count):
-            vtx_to_map[self.names[i]] = cmds.polyListComponentConversion(self.names[i], tuv=True)
+            vtx_to_map[self.vtx_names[i]] = cmds.polyListComponentConversion(self.vtx_names[i], tuv=True)
         return vtx_to_map
     
     def BuildVertexIndicesFromMaps(self):
@@ -127,15 +127,10 @@ class Vertex(BaseStructure):
             map_to_vtx[self.uv_maps[i]] = to_vtx_name[0]
         return map_to_vtx
     
-    def InitEdgeFlag(self):
-        flag = []
-        for i in range(len(self.positions)): flag += [1]
-        return flag
-    
     # parameter of joints is Hash<Int->String>
     def SetupBoneWeight(self, skin_cluster, joints):
-        weights = [None] * self.uv_counts
-        bone_num = [None] * self.uv_counts
+        weights = [None] * self.uv_count
+        bone_num = [None] * self.uv_count
         for map,vtx in self.map_to_vtx.items():
             joint_weights = []
             for j in range(len(joints)):
@@ -157,21 +152,26 @@ class Vertex(BaseStructure):
         self.bone_weights = weights
         self.bone_num = bone_num
     
+    def InitEdgeFlag(self):
+        flag = []
+        for i in range(self.uv_count): flag += [1]
+        return flag
+    
     def InitBoneNum(self):
         bone_num = []
-        for i in range(len(self.positions)):
-            bone_num.append([0,0])
+        for i in range(self.uv_count):
+            bone_num += [[0,0]]
         return bone_num        
     
     def InitBoneWeight(self):
         weight = []
-        for i in range(len(self.positions)):
-            weight.append(100)
+        for i in range(self.uv_count):
+            weight = [1]
         return weight
     
     def ToIndices(self):
         indices = []
-        for name in self.names:
+        for name in self.vtx_names:
             indices.append(GetIndex(name))
         return indices
 
