@@ -78,13 +78,16 @@ class BaseStructure:
         self.model = model
         self.names = None
 
-    def GetUVNameList(self):
+    def GetUVNameList(self, pref='.uv'):
         uv_count = cmds.polyEvaluate(self.model, uv=True)
         uv_name_list = []
         for i in range(uv_count):
-            uv_name_list += [self.model + '.uv[' + str(i) + ']']
+            uv_name_list += [self.model + pref + '[' + str(i) + ']']
             print uv_name_list[i]
         return uv_name_list
+        
+    def GetUVMapList(self):
+        return self.GetUVNameList(pref='.map')
 
 #------------------------------------------------
 # Vertex Class
@@ -94,9 +97,11 @@ class Vertex(BaseStructure):
         BaseStructure.__init__(self, model)
         self.names = GetVerticesList(model)
         self.uv_names = self.GetUVNameList()
+        self.uv_maps = self.GetUVMapList()
         
         self.uvs = self.ToUVs()
-        self.uv_to_vtx_indices = self.BuildUVToVertex()
+        self.uv_to_vtx_indices = self.BuildVertexIndicesFromUVName()
+        self.vtx_to_uv_indices = self.BuildUVIndicesFromVertexName()
         
         self.indices = self.ToIndices()
         self.positions = self.ToPositions()
@@ -108,7 +113,13 @@ class Vertex(BaseStructure):
         
         self.count = len(self.positions)
     
-        
+    def BuildVertexIndicesFromUVName(self):
+        uv_count = len(self.uvs)
+        vtx_indices = {}
+        for i in range(uv_count):
+            vtx_indices[i] = cmds.polyListComponentConversion(self.uv_maps[i], tv=True)
+        print vtx_indices
+    
     def InitEdgeFlag(self):
         flag = []
         for i in range(len(self.positions)): flag += [1]
