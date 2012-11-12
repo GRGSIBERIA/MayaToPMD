@@ -217,7 +217,7 @@ class Face(BaseStructure):
             tmp = uv_indices[1]
             del uv_indices[1]
             for i in range(diff):
-                uv_indices += [uv_indices + i + 1]
+                uv_indices += [uv_indices[0] + i + 1]
             uv_indices += [tmp]
         return uv_indices
     
@@ -665,6 +665,7 @@ class ExportFaces(ExporterBase):
         for triangle in self.data.vtx_indices:
             # swap triangle order, it's different from MMD.
             self.Words(bin, self.Swap(triangle))
+            #self.Words(bin, triangle)
 
     def Swap(self, triangle):
         tri = list(triangle)
@@ -840,12 +841,12 @@ cmds.select('pCube3', tgl=True)
 
 w = StructureWindow()
 
-"""
+
 bin = open('C:/export.pmd', 'wb')
 e = ExportPlatform(w)
 e.Export(bin)
 bin.close
-"""
+
 
 #get selecting uv coordinate
 #print cmds.polyEditUV(q=True)
