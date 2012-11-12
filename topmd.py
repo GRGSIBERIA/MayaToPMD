@@ -183,9 +183,10 @@ class Vertex(BaseStructure):
         return pos
             
     def ToNormals(self):
-        nrm = []
-        for name in self.names:
-            nrm.append(GetVertexNormal(name))
+        nrm = [None] * self.uv_count
+        for map,vtx in self.map_to_vtx.items():
+            index = GetIndex(map)
+            nrm[index] = GetVertexNormal(vtx)
         return nrm
 
     def ToUVs(self):
