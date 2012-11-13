@@ -217,7 +217,12 @@ class Face(BaseStructure):
             for vtx_ind in vis:
                 vtx_nrm += [vertex.normals[vtx_ind]]
                 vtx_pos += [vertex.positions[vtx_ind]]
-            
+    
+    def SubPosition(p1, p2):
+        sub_p = []
+        for i in range(3):
+            sub_p += [p1[i] - p2[i]]
+        return sub_p
         
     def CreateIndicesFromFaceNameToUVNames(self, uv):
         uv_indices = re.search('\[(\d+|\d+:\d+)\]', uv)
