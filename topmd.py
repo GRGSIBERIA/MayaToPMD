@@ -1,4 +1,6 @@
 import maya.cmds as cmds
+import maya.mel as mm
+from math import sqrt
 from struct import *
 import re
 
@@ -217,12 +219,23 @@ class Face(BaseStructure):
             for vtx_ind in vis:
                 vtx_nrm += [vertex.normals[vtx_ind]]
                 vtx_pos += [vertex.positions[vtx_ind]]
+            v1 = self.SubPosition(vtx_pos[1], vtx_pos[0])
+            v2 = self.SubPosition(vtx_pos[2], vtx_pos[1])
+            cross = self.CrossVectors(v1, v2)
+            cross = self.NormalizeVector(cross)
+    
+    def NormalizeVector(v):
+        length = sqrt(v[0]*v[0]+v[1]*v[1]+v[2]*v[2])
+        return (length*v[0], length*v[1], length*v[2])
+    
+    def CrossVectors(v1, v2):
+        return mm.eval('$a = <<%f, %f, %f>> ^ <<%f, %f, %f>>', v1, v2)
     
     def SubPosition(p1, p2):
         sub_p = []
         for i in range(3):
             sub_p += [p1[i] - p2[i]]
-        return sub_p
+        return tuple(sub_p)
         
     def CreateIndicesFromFaceNameToUVNames(self, uv):
         uv_indices = re.search('\[(\d+|\d+:\d+)\]', uv)
