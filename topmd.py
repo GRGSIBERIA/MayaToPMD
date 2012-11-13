@@ -202,10 +202,22 @@ class Face(BaseStructure):
     def __init__(self, model, vertex):
         BaseStructure.__init__(self, model)
         self.names = GetFacesList(model)
-        self.vtx_indices = self.BuildTriangleIntoIndices(vertex)
+        self.vtx_indices = self.BuildTriangleIntoIndices()
         self.count = len(self.vtx_indices)
         self.materials_from_face = self.ToMaterialFromFace()
         self.vtx_indices = self.SortingFaceByMaterial(self.materials_from_face)
+        
+        self.ResortTriangleForFaceNormal(vertex)
+        
+    def ResortTriangleForFaceNormal(self, vertex):
+        for fi in range(len(self.vtx_indices)):
+            vis = self.vtx_indices[fi]
+            vtx_pos = []
+            vtx_nrm = []
+            for vtx_ind in vis:
+                vtx_nrm += [vertex.normals[vtx_ind]]
+                vtx_pos += [vertex.positions[vtx_ind]]
+            
         
     def CreateIndicesFromFaceNameToUVNames(self, uv):
         uv_indices = re.search('\[(\d+|\d+:\d+)\]', uv)
@@ -228,7 +240,7 @@ class Face(BaseStructure):
             face_to_uvs += self.CreateIndicesFromFaceNameToUVNames(uv)
         return face_to_uvs
     
-    def BuildTriangleIntoIndices(self, vertex):
+    def BuildTriangleIntoIndices(self):
         indices = []
         for face_name in self.names:
             triangle = self.SearchFaceToUVForUVIndices(face_name)
