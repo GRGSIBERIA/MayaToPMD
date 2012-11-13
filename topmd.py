@@ -223,15 +223,26 @@ class Face(BaseStructure):
             v2 = self.SubPosition(vtx_pos[2], vtx_pos[1])
             cross = self.CrossVectors(v1, v2)
             cross = self.NormalizeVector(cross)
+            dot_val = 0.0
+            for i in range(3): dot_val += self.DotNormalAndCross(vtx_nrm[i], cross)
+            
+            if dot_val < 0:    # swap indices
+                tmp = self.vtx_indices[fi][0]
+                self.vtx_indices[fi][0] = self.vtx_indices[fi][2]
+                self.vtx_indices[fi][2] = tmp
+                
     
-    def NormalizeVector(v):
-        length = sqrt(v[0]*v[0]+v[1]*v[1]+v[2]*v[2])
+    def DotNormalAndCross(self, n, c):
+        return mm.eval('float $b = <<%f, %f, %f>> * <<%f, %f, %f>>' % (n[0], n[1], n[2], c[0], c[1], c[2]))
+    
+    def NormalizeVector(self, v):
+        length = 1.0 / sqrt(v[0]*v[0]+v[1]*v[1]+v[2]*v[2])
         return (length*v[0], length*v[1], length*v[2])
     
-    def CrossVectors(v1, v2):
-        return mm.eval('$a = <<%f, %f, %f>> ^ <<%f, %f, %f>>', v1, v2)
+    def CrossVectors(self, v1, v2):
+        return mm.eval('$a = <<%f, %f, %f>> ^ <<%f, %f, %f>>' % (v1[0], v1[1], v1[2], v2[0], v2[1], v2[2]))
     
-    def SubPosition(p1, p2):
+    def SubPosition(self, p1, p2):
         sub_p = []
         for i in range(3):
             sub_p += [p1[i] - p2[i]]
