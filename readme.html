@@ -1,7 +1,7 @@
 <html>
 <head>
 	<title>MayaToPMD --readme--</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=Shift-JIS">
+    <meta http-equiv="Content-Type" content="text/html; charset=Shift-JIS" />
     <style type="text/css">
     <!--
     font.attn  
@@ -28,8 +28,10 @@
         <h2>はじめに</h2>
         <div class="contents">
             MayaToPMDはMayaからPMDファイルを出力するためのスクリプトです。<br />
-            ウェイト調整などを普段慣れているツールで省力化する目的で作りました。<br />
-            ボーンの設定や表示枠などはボーンの名前そのままなので注意してください。<br />
+            PMD Editorのウェイトやモーフが力不足で使いづらかったのと、<br />
+            どうせなら慣れているツールを使いたかったので作りました。<br />
+            <br />
+            ボーンの設定や表示枠などのボーンの名前はそのままなので注意してください。<br />
             また、IKやConstraintなども無視されるので、<br />
             使いたい方はPMD Editorで編集するようお願いします。<br />
             <br />
@@ -42,11 +44,17 @@
     <div class="section">
         <h2>注意事項まとめ</h2>
         <div class="contents">
+            他のツールより注意点が多いかもしれません。<br />
+            人によってはPMD Editorのほうが安全に作れるかもしれません。<br />
+            うっかりミスすると取り返しのつかないことになることがあります。<br />
+            なので、読みながら作ることをお勧めします。<br />
             <ol>
+                <li>各工程を遡ることはできない</li>
                 <li>日本語の名前を使わない</li>
                 <li>モデリングの後はTriangulateをかける</li>
-                <li>頂点数は65,535個まで</li>
-                <li>5マス分が1MU</li>
+                <li>UV数は65,535個まで</li>
+                <li>グリッド5マス分が1MU（PMD Editorの1マスの単位）</li>
+                <li>Smooth Bineする前に必ずボーンの向きをFreezeする</li>
                 <li>ウェイトを弄ったらBind Poseに戻す</li>
                 <li>モーフ元のモデルは弄らない</li>
                 <li>必ず一度はPMD Editorで編集してから保存する</li>
@@ -60,9 +68,32 @@
         <div class="contents">
             MayaToPMDは操作によって出力に失敗するだけでなく、<br />
             一部の工程が作り直しになってしまうパターンがあります。<br />
-            以下の工程を注意して読みながらモデルを作ってください。<br />
+            <font class="attn">各工程を遡ることはできません。</font><br />
+            十分に熟読してから使ってください。<br />
+            <br />
             なお、すべての工程で<font class="attn">日本語を使ってはいけません</font>。<br />
             <br />
+        </div>
+
+        <div class="section">
+            <h3>操作手順まとめ</h3>
+            <div class="contents">
+                <ol>
+                    <li>モデリングをする</li>
+                    <li>Triangulateをかける</li>
+                    <li>ボーンを設置する</li>
+                    <li>ルートボーンにFreeze Transformations（Joint Orientにチェック）をかける</li>
+                    <li>Smooth Bindする</li>
+                    <li>ウェイト調整をする</li>
+                    <li>Go to Bind Poseでボーンを戻す</li>
+                    <li>元となるモデルを複製してモーフを作成する</li>
+                    <li>Script Editorを開いてtopmd.pyのソースコードを貼り付ける</li>
+                    <li>モデル→ルートボーン→モーフ（複数選択可）の順番で選択する</li>
+                    <li>スクリプトを実行する</li>
+                    <li>PMDファイルが作成される（デフォルトはCドライブ直下）のでどこかへ複製する</li>
+                    <li>PMDエディタで細部を調整する</li>
+                </ol>
+            </div>
         </div>
 
         <div class="section">
@@ -72,7 +103,8 @@
                 作成したモデルをMudBoxやZBrushで着色したり、ディティールを掘り下げるのもOKです。<br />
                 ただし、<font class="attn">モデリングが終わったら必ずTriangulate</font>をかけてください。<br />
                 三角形ポリゴンでないと出力に失敗します。<br />
-                また、<font class="attn">頂点数は65,535個が限界</font>です。<br />
+                また、<font class="attn">UV数の限界が65,535個</font>です。<br />
+                ポリゴン数ではないので注意してください。<br />
                 それ以下に調整してください。<br />
                 <b>なお、グリッドの5マス分が1MUです</b>。<br />
                 <br />
@@ -83,7 +115,9 @@
             <h3>ボーン</h3>
             <div class="contents">
                 <b>ボーンの名前はできるだけ20文字以内</b>に抑えてください。<br />
+                20文字以上は切れてしまいます。<br />
                 IKやExpressionなどは無視されるので注意してください。<br />
+                この工程が完了したら<font class="attn">必ずFreeze Transformations（Orient Jointにチェック）</font>をかけてください。
                 <br />
             </div>
         </div>
@@ -92,7 +126,8 @@
             <h3>ウェイト</h3>
             <div class="contents">
                 <font class="attn">Smooth Bind</font>を使ってください。<br />
-                この工程が終わったら必ずBind Poseに戻してください。<br />
+                後は普通にウェイトを調整するだけです。<br />
+                この工程が終わったら必ず<font class="attn">Go to Bind Pose</font>で戻してください。<br />
                 <br />
             </div>
         </div>
@@ -116,7 +151,7 @@
                 モデルデータ→ルートボーン→モーフモデル（複数選択可）の順で選択し、<br />
                 貼り付けたスクリプトを実行してください。<br />
                 <b>デフォルトではCドライブ直下にexport.pmdが作られます</b>。<br />
-                Mayaにファイルコントロールを奪われたままなので、<font class=attn>どこかへコピー＆ペーストしてください</font>。
+                Mayaにファイルコントロールを奪われたままなので、<font class="attn">どこかへコピー＆ペーストしてください</font>。<br />
                 なお、パスを変更するには該当箇所のパスを変更してください。<br />
                 <br />
             </div>
