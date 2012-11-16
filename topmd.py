@@ -762,16 +762,15 @@ class ExportBones(ExporterBase):
         if self.data != None:
             print 'bone count: ', self.data.count
             self.Word(bin, self.data.count)
-            null_words = ['a', 'b', 'c', 0x00]
-            for i in range(16): null_words += [0xFD]
             
             for i in range(self.data.count):
+                print self.data.short[i]
                 short_name = self.ConvertStringIntoArray(self.data.short[i], 20)
                 
                 length = len(short_name)
                 length = 20 if length > 20 else length
                 for j in range(length):
-                    self.Chars(bin, short_name)
+                    self.Char(bin, short_name[j])
                     
                 self.Word(bin, self.data.parent[i])
                 self.Word(bin, 0xFFFF)
@@ -779,7 +778,9 @@ class ExportBones(ExporterBase):
                 self.Word(bin, 0)
                 
                 pos = self.ReverseVector(self.data.bone_pos[i])
-                self.Floats(bin, self.data.bone_pos[i])
+                self.Floats(bin, pos)
+                print self.data.bone_pos[i]
+                print pos
         else:
             print 'do not have bones.'
 
