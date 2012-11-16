@@ -739,8 +739,13 @@ class ExportMaterials(ExporterBase):
             self.Byte(bin, 0xFF)
             self.Byte(bin, self.data.edge_flag[i])
             self.DWord(bin, self.data.face_count[i]*3)
-            self.Chars(bin, self.data.file_name[i])
-            for i in range(20-len(self.data.file_name[i])):
+            
+            length = self.data.file_name[i]
+            length = 20 if length > 20 else length
+            print length
+            for j in range(length):
+                self.Char(bin, self.data.file_name[i][j])
+            for j in range(20-length):
                 self.Char(bin, 0)
                 
 #------------------------------------------------
@@ -763,7 +768,11 @@ class ExportBones(ExporterBase):
             for i in range(self.data.count):
                 short_name = self.ConvertStringIntoArray(self.data.short[i], 20)
                 
-                self.Chars(bin, short_name)
+                length = len(short_name)
+                length = 20 if length > 20 else length
+                for j in range(length):
+                    self.Chars(bin, short_name)
+                    
                 self.Word(bin, self.data.parent[i])
                 self.Word(bin, 0xFFFF)
                 self.Byte(bin, 0)
