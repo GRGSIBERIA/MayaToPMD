@@ -410,7 +410,8 @@ class Bone(BaseStructure):
     def ToBonePosition(self):
         pos = []
         for bone in self.names:
-            pos += cmds.getAttr(bone + '.translate')
+            xfm = cmds.xform(bone, q=True, ws=True, t=True)
+            pos += [xfm]
         return pos
         
     def InitBoneType(self):
@@ -779,8 +780,6 @@ class ExportBones(ExporterBase):
                 
                 pos = self.ReverseVector(self.data.bone_pos[i])
                 self.Floats(bin, pos)
-                print self.data.bone_pos[i]
-                print pos
         else:
             print 'do not have bones.'
 
