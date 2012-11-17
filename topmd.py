@@ -156,7 +156,7 @@ class Vertex(BaseStructure):
     
     def InitEdgeFlag(self):
         flag = []
-        for i in range(self.uv_count): flag += [1]
+        for i in range(self.uv_count): flag += [0]
         return flag
     
     def InitBoneNum(self):
@@ -741,7 +741,7 @@ class ExportMaterials(ExporterBase):
             self.Byte(bin, self.data.edge_flag[i])
             self.DWord(bin, self.data.face_count[i]*3)
             
-            length = self.data.file_name[i]
+            length = len(self.data.file_name[i])
             length = 20 if length > 20 else length
             print length
             for j in range(length):
