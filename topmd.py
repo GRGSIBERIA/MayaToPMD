@@ -96,6 +96,10 @@ class BaseStructure:
 class Vertex(BaseStructure):
     def __init__(self, model):
         BaseStructure.__init__(self, model)
+        
+        print '-------------------'
+        print 'importing Vertex'
+        
         self.vtx_names = GetVerticesList(model)
         self.uv_names = self.GetUVNameList()
         self.uv_maps = self.GetUVMapList()
@@ -203,6 +207,10 @@ class Vertex(BaseStructure):
 class Face(BaseStructure):
     def __init__(self, model, vertex):
         BaseStructure.__init__(self, model)
+        
+        print '-------------------'
+        print 'importing Face'
+        
         self.names = GetFacesList(model)
         self.vtx_indices = self.BuildTriangleIntoIndices()
         self.count = len(self.vtx_indices)
@@ -304,6 +312,10 @@ class Face(BaseStructure):
 class Material(BaseStructure):
     def __init__(self, model, face):
         BaseStructure.__init__(self, model)
+        
+        print '-------------------'
+        print 'importing Material'
+        
         self.materials = sorted(GetAssinedMaterialNodeFromModel(model))
         self.diffuse = self.ToDiffuse()
         self.transparent = self.ToTransparent()
@@ -390,6 +402,10 @@ class Material(BaseStructure):
 class Bone(BaseStructure):
     def __init__(self, model, root):
         BaseStructure.__init__(self, model)
+        
+        print '-------------------'
+        print 'importing Bone'
+        
         cmds.select(root)
         cmds.select(hierarchy=True)
         self.names = cmds.ls(sl=True, l=True)
@@ -446,6 +462,10 @@ class Bone(BaseStructure):
 class Skin(BaseStructure):
     def __init__(self, model, skins):
         BaseStructure.__init__(self, model)
+        
+        print '-------------------'
+        print 'importing Skin'
+        
         self.names = skins
         self.skin_vertex = self.SetupSkinPositions()
         self.skin_count = len(self.skin_vertex)
