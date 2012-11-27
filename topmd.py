@@ -106,6 +106,8 @@ class Vertex(BaseStructure):
         self.uv_count = len(self.uv_names)
         self.vertex_count = cmds.polyEvaluate(model, v=True)
         
+        print 'vertex count: ', self.vertex_count
+        
         self.uvs = self.ToUVs()
         self.map_to_vtx = self.BuildVertexIndicesFromMaps()
         self.vtx_to_map= self.BuildMapIndicesFromVertexNames()
@@ -113,6 +115,7 @@ class Vertex(BaseStructure):
         #self.indices = self.ToIndices()
         self.positions = self.ToPositions()
         self.normals = self.ToNormals()
+        print 'normal count: ', len(self.normals)
         
         self.bone_weights = self.InitBoneWeight()
         self.bone_num = self.InitBoneNum()
@@ -230,19 +233,24 @@ class Face(BaseStructure):
         
     def ResortTriangleForFaceNormal(self, vertex):
         for fi in range(len(self.vtx_indices)):
+            print '============================'
             vis = self.vtx_indices[fi]
+            print 'target index: ', vis
             vtx_pos = []
             vtx_nrm = []
             for vtx_ind in vis:
                 vtx_nrm += [vertex.normals[vtx_ind]]
                 vtx_pos += [vertex.positions[vtx_ind]]
+            print 'pushed pos, norm'
             v1 = self.SubPosition(vtx_pos[1], vtx_pos[0])
             v2 = self.SubPosition(vtx_pos[2], vtx_pos[1])
+            print 'calculate vector1, vector2'
             cross = self.CrossVectors(v1, v2)
             cross = self.NormalizeVector(cross)
+            print 'calculate cross product'
             dot_val = 0.0
             for i in range(3): dot_val += self.DotNormalAndCross(vtx_nrm[i], cross)
-            
+            print 'dot value: ', dot_val
             if dot_val < 0:    # swap indices
                 tmp = self.vtx_indices[fi][0]
                 self.vtx_indices[fi][0] = self.vtx_indices[fi][2]
