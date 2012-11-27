@@ -212,12 +212,21 @@ class Face(BaseStructure):
         print 'importing Face'
         
         self.names = GetFacesList(model)
+        print 'name count: ', len(self.names)
+        
         self.vtx_indices = self.BuildTriangleIntoIndices()
+        print 'vtx indices count: ', len(self.vtx_indices)
+        
         self.count = len(self.vtx_indices)
+        
         self.materials_from_face = self.ToMaterialFromFace()
+        print 'materials from face: ', len(self.materials_from_face)
+        
         self.vtx_indices = self.SortingFaceByMaterial(self.materials_from_face)
+        print 'sorted vtx indices count: ', len(self.vtx_indices)
         
         self.ResortTriangleForFaceNormal(vertex)
+        print 'resorted'
         
     def ResortTriangleForFaceNormal(self, vertex):
         for fi in range(len(self.vtx_indices)):
