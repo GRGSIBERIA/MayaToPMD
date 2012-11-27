@@ -233,25 +233,19 @@ class Face(BaseStructure):
         
     def ResortTriangleForFaceNormal(self, vertex):
         for fi in range(len(self.vtx_indices)):
-            print '============================'
             vis = self.vtx_indices[fi]
             if len(vis) <= 0: continue
-            print 'target index: ', vis
             vtx_pos = []
             vtx_nrm = []
             for vtx_ind in vis:
                 vtx_nrm += [vertex.normals[vtx_ind]]
                 vtx_pos += [vertex.positions[vtx_ind]]
-            print 'pushed pos, norm'
             v1 = self.SubPosition(vtx_pos[1], vtx_pos[0])
             v2 = self.SubPosition(vtx_pos[2], vtx_pos[1])
-            print 'calculate vector1, vector2'
             cross = self.CrossVectors(v1, v2)
             cross = self.NormalizeVector(cross)
-            print 'calculate cross product'
             dot_val = 0.0
             for i in range(3): dot_val += self.DotNormalAndCross(vtx_nrm[i], cross)
-            print 'dot value: ', dot_val
             if dot_val < 0:    # swap indices
                 tmp = self.vtx_indices[fi][0]
                 self.vtx_indices[fi][0] = self.vtx_indices[fi][2]
@@ -745,6 +739,7 @@ class ExportFaces(ExporterBase):
         self.DWord(bin, self.data.count * 3)
         for triangle in self.data.vtx_indices:
             # swap triangle order, it's different from MMD.
+            if len(triangle) <= 0: self.Words(bin, [0, 0, 0])    # counter zero polygon
             self.Words(bin, self.Swap(triangle))
             #self.Words(bin, triangle)
 
