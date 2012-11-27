@@ -54,6 +54,7 @@
                 <li>モデリングの後はTriangulateをかける</li>
                 <li>UV数は65,535個まで</li>
                 <li>グリッド5マス分が1MU（PMD Editorの1マスの単位）</li>
+                <li>テクスチャマッピングが終わったら必ずヒストリーを消す</li>
                 <li>Smooth Binedする前に必ずボーンの向きをFreezeする</li>
                 <li>ウェイトを弄ったらBind Poseに戻す</li>
                 <li>モーフ元のモデルは弄らない</li>
@@ -80,7 +81,9 @@
             <div class="contents">
                 <ol>
                     <li>モデリングをする</li>
+                    <li>テクスチャのマッピングをする</li>
                     <li>Triangulateをかける</li>
+                    <li>ヒストリーを消す</li>
                     <li>ボーンを設置する</li>
                     <li>ルートボーンにFreeze Transformations（Joint Orientにチェック）をかける</li>
                     <li>Smooth Bindする</li>
@@ -109,6 +112,7 @@
                 それ以下に調整してください。<br />
                 <b>なお、グリッドの5マス分が1MUです</b>。<br />
                 <br />
+                最後に、<font class="attn">ヒストリーを消してください</font>。
             </div>
         </div>
 
