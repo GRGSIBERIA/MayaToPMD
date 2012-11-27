@@ -736,12 +736,16 @@ class ExportFaces(ExporterBase):
         print '-------------------'
         print 'exporting Face'
         print 'faces count: ', self.data.count
+        counter = 0
         self.DWord(bin, self.data.count * 3)
         for triangle in self.data.vtx_indices:
             # swap triangle order, it's different from MMD.
-            if len(triangle) <= 0: self.Words(bin, [0, 0, 0])    # counter zero polygon
+            if len(triangle) <= 0:
+                print 'zero polygon: ', counter
+                self.Words(bin, [0, 0, 0])    # counter zero polygon
             self.Words(bin, self.Swap(triangle))
             #self.Words(bin, triangle)
+            counter += 1
 
     def Swap(self, triangle):
         tri = list(triangle)
