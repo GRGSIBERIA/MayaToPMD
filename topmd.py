@@ -235,6 +235,7 @@ class Face(BaseStructure):
         for fi in range(len(self.vtx_indices)):
             print '============================'
             vis = self.vtx_indices[fi]
+            if len(vis) <= 0: continue
             print 'target index: ', vis
             vtx_pos = []
             vtx_nrm = []
