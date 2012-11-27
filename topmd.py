@@ -569,6 +569,7 @@ class StructureWindow:
         try:
             self.model = self.selected[0]
         except IndexError:
+            print "do not select objects."
             raise "do not select objects."
         try:
             self.root_bone = self.selected[1]
