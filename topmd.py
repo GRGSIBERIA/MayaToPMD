@@ -259,7 +259,8 @@ class Face(BaseStructure):
         length = 0
         try:
             length = 1.0 / sqrt(v[0]*v[0]+v[1]*v[1]+v[2]*v[2])
-        except ZeroDivisionError:
+        except ZeroDivisionError, E:
+            print 'raise ZeroDivisionError!?: ', v
             return (1.0, 0.0, 0.0)
         return (length*v[0], length*v[1], length*v[2])
     
