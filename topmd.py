@@ -256,7 +256,11 @@ class Face(BaseStructure):
         return mm.eval('float $b = <<%f, %f, %f>> * <<%f, %f, %f>>' % (n[0], n[1], n[2], c[0], c[1], c[2]))
     
     def NormalizeVector(self, v):
-        length = 1.0 / sqrt(v[0]*v[0]+v[1]*v[1]+v[2]*v[2])
+        length = 0
+        try:
+            length = 1.0 / sqrt(v[0]*v[0]+v[1]*v[1]+v[2]*v[2])
+        except ZeroDivisionError:
+            return (1.0, 0.0, 0.0)
         return (length*v[0], length*v[1], length*v[2])
     
     def CrossVectors(self, v1, v2):
@@ -736,16 +740,12 @@ class ExportFaces(ExporterBase):
         print '-------------------'
         print 'exporting Face'
         print 'faces count: ', self.data.count
-        counter = 0
         self.DWord(bin, self.data.count * 3)
         for triangle in self.data.vtx_indices:
             # swap triangle order, it's different from MMD.
-            if len(triangle) <= 0:
-                print 'zero polygon: ', counter
-                self.Words(bin, [0, 0, 0])    # counter zero polygon
+            if len(triangle) <= 0: self.Words(bin, [0, 0, 0])    # counter zero polygon
             self.Words(bin, self.Swap(triangle))
             #self.Words(bin, triangle)
-            counter += 1
 
     def Swap(self, triangle):
         tri = list(triangle)
