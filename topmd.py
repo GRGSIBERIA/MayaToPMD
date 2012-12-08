@@ -131,11 +131,14 @@ class Vertex(BaseStructure):
     
     def BuildVertexIndicesFromMaps(self):
         map_to_vtx = {}
+        except_count = 0
         for i in range(self.uv_count):
-            print 'uv_maps:', self.uv_maps[i]
-            to_vtx_name = cmds.polyListComponentConversion(self.uv_maps[i], tv=True)
-            print 'to_vtx_name:', to_vtx_name
-            map_to_vtx[self.uv_maps[i]] = to_vtx_name[0]
+            try:
+                to_vtx_name = cmds.polyListComponentConversion(self.uv_maps[i], tv=True)
+                map_to_vtx[self.uv_maps[i]] = to_vtx_name[0]
+            except:
+                print 'no exist uv: ', self.uv_maps[i]
+                map_to_vtx[self.uv_maps[i]] = map_to_vtx.values()[0]
         return map_to_vtx
     
     # parameter of joints is Hash<Int->String>
