@@ -933,7 +933,12 @@ w = StructureWindow()
 
 bin = open('C:/export.pmd', 'wb')
 e = ExportPlatform(w)
-e.Export(bin)
+try:
+    e.Export(bin)
+except Exception, inst:
+    print type(inst)
+    print inst
+    raise Exception(type(inst))
 bin.close
 
 
